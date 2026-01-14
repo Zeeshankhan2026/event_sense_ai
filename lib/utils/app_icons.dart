@@ -1,0 +1,22 @@
+class AppIcons {
+  static final welcome_screen_icon_celeb = "assets/icons/celeberation.svg";
+  static final welcome_screen_icon_bag = "assets/icons/bag.svg";
+  static final calender_icon = "assets/icons/calender.svg";
+  static final star_icon = "assets/icons/star.svg";
+  static final wallet_icon = "assets/icons/wallet.svg";
+  static final profile_icon = "assets/icons/profile.svg";
+  static final nofication_icon = "assets/icons/notification.svg";
+  static final document_icon = "assets/icons/document.svg";
+  static final right_arrow = "assets/icons/right_arrow.svg";
+  static final home_icon = "assets/icons/home_icon.svg";
+  static final event_icon = "assets/icons/event_icon.svg";
+  static final message_icon = "assets/icons/messsage_icon.svg";
+  static final people_icon = "assets/icons/peoples.svg";
+  static final location_icon = "assets/icons/location.svg";
+  static final check_budget = "assets/icons/check_budget.svg";
+  static final find_venue = "assets/icons/find_venu.svg";
+  static final guest_list = "assets/icons/guest_list.svg";
+  static final draft_invite = "assets/icons/draft_invit_icon.svg";
+  static final vendors = "assets/icons/vendors.svg";
+  static final guests = "assets/icons/guest.svg";
+}
