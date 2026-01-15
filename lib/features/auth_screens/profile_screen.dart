@@ -29,14 +29,12 @@ class ProfileScreen extends StatelessWidget {
               children: [
               CustomCircleAvatar(assetImage: AppIcons.profile_icon),
                 Gap(20),
-                Container(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      AppText("Denial Jones", type: AppTextType.heading3, color: AppColors.black,),
-                      AppText("DenialJones@gmail.com", type: AppTextType.captionPrimary,color: Colors.grey,)
-                    ],
-                  ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    AppText("Denial Jones", type: AppTextType.heading3, color: AppColors.black,),
+                    AppText("DenialJones@gmail.com", type: AppTextType.captionPrimary,color: Colors.grey,)
+                  ],
                 ),
                 
               ],

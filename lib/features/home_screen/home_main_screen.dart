@@ -359,7 +359,7 @@ class HomeMainScreen extends StatelessWidget {
               QuickAccessCard(
                   title: "Guest Management",
                   height: 50 , width: 800,
-                  bg_color: Colors.grey,
+                  bg_color: AppColors.second_tile_color,
                   text_color: AppColors.second_tile_color,
                   radius: 12,
                   prefix_icon: AppIcons.guests,

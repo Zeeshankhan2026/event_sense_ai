@@ -7,5 +7,5 @@ class AppAssets {
   static final forget_password = "assets/images/forget_password.png";
    static final person_image = "assets/images/person_image.png";
    static final wedding_image = "assets/images/weddings.png";
-
+   static final wedding_image2 = "assets/images/wedding_receptiion2.png";
 }

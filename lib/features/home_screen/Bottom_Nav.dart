@@ -62,8 +62,8 @@ class _BottomNavState extends State<BottomNav> {
               // Icon always first
               SvgPicture.asset(
               item.iconPath,
-                width: 24,
-                height: 24,
+                width: 30,
+                height: 30,
                 colorFilter: ColorFilter.mode(
                   isSelected ? Colors.black : Colors.black54,
                   BlendMode.srcIn,
