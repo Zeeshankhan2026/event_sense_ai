@@ -1,10 +1,14 @@
+import 'package:event_sense_ai/routes/app_routes.dart';
 import 'package:event_sense_ai/utils/app_assets.dart';
 import 'package:event_sense_ai/utils/app_colors.dart';
+import 'package:event_sense_ai/utils/app_icons.dart';
 import 'package:event_sense_ai/utils/app_text.dart';
 import 'package:event_sense_ai/widgets/app_buttons.dart';
 import 'package:event_sense_ai/widgets/app_textfield.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../widgets/custom_rich_text.dart';
 
@@ -44,28 +48,26 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Gap(30),
-                        AppText("LOGO", type: AppTextType.appBar,color: AppColors.white,fontSize: 22,),
                         Gap(20),
+                        AppText("LOGO", type: AppTextType.appBar,color: AppColors.white,fontSize: 22,),
+                        Gap(10),
                         AppText("Sign in to your \nAccount", type: AppTextType.heading1,color: AppColors.white,fontSize: 30,),
-                        SizedBox(height: 10,),
+                        SizedBox(height: 15,),
                         Row(
                           children: [
                             AppText("Already have an account?",
-                              type: AppTextType.caption,
-                              color: AppColors.white,fontSize: 18,),
-                            TextButton(
-                                onPressed: (){
-
-                                },
-                                child: Column(
-                                  children: [
-                                    AppText("Login",
-                                      type: AppTextType.heading1,
-                                      color: AppColors.text_button,),
-                                Container( margin: const EdgeInsets.only(top: 2), height: 2, width: 55, color: AppColors.text_button, ),
-                                  ],
-                                ))
+                              type: AppTextType.caption,color: AppColors.white,fontWeight: FontWeight.w500
+                              ),
+                            Gap(5),
+                            Column(
+                              children: [
+                                AppText("Login",
+                                  type: AppTextType.caption,
+                                  fontWeight: FontWeight.w600,
+                                  color: AppColors.text_button,),
+                                Container( margin: const EdgeInsets.only(top: 2), height: 2, width: 35, color: AppColors.text_button, ),
+                              ],
+                            )
                           ],
                         ),
                       ],
@@ -73,7 +75,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   )
                 ]
             ),
-            SizedBox(height: 30,),
+            SizedBox(height: 10,),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 18.0),
               child: Column(
@@ -147,19 +149,21 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   SizedBox(height: 10,),
                   AppButtonWidget(
                       onPressed: (){
-
+                        context.goNamed(AppRoutes.main);
                       },
                       width: width*0.85,
                       height: height*0.06,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
                       buttonColor: AppColors.fieldColor,
-                      text: "Login"),
-                  SizedBox(height: 10,),
+                      text: "SignUp"),
+                  SizedBox(height: 5 ,),
                   AppText("Or Login with", type: AppTextType.captionDark,),
                   SizedBox(height: 5,),
                   AppButtonWidget(
                     width: width*0.85,
                     height: height*0.05,
-                    text: "Google", prefixIcon: Image.asset(AppAssets.google_logo),
+                    text: "Google", prefixIcon: SvgPicture.asset(AppIcons.google_icon),
                     buttonColor: Colors.white,
                     textColor: AppColors.black,),
                   StyledText(

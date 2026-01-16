@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class EventCard extends StatelessWidget {
   final String title;
@@ -55,7 +56,7 @@ class EventCard extends StatelessWidget {
             // Thumbnail
             ClipRRect(
               borderRadius: BorderRadius.circular(12),
-              child: Image.asset(
+              child: SvgPicture.asset(
                 imagePath,
                 width: 80,
                 height: 80,

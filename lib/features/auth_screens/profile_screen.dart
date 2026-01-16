@@ -106,7 +106,6 @@ class ProfileScreen extends StatelessWidget {
               fontSize: 22,
               radius: (32),
                 onPressed: (){
-                Navigator.of(context).push(MaterialPageRoute(builder: (_) => BottomNav()));
                 },
                 width: width*0.85,
                 height: height*0.06,

@@ -1,5 +1,7 @@
 import 'package:event_sense_ai/features/auth_screens/profile_screen.dart';
+import 'package:event_sense_ai/routes/app_routes.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:pinput/pinput.dart';
 
 import '../../utils/app_assets.dart';
@@ -47,7 +49,7 @@ class OtpScreen extends StatelessWidget {
                         children: [
                           AppText("We have sent a 4 digit code to email",
                             type: AppTextType.caption,
-                            color: AppColors.white,fontSize: 18,),
+                            color: AppColors.white,),
                         ],
                       ),
                     ],
@@ -67,17 +69,18 @@ class OtpScreen extends StatelessWidget {
           SizedBox(height: 30,),
           AppButtonWidget(
               onPressed: (){
-                Navigator.of(context).push(MaterialPageRoute(builder: (context) => ProfileScreen()));
+                context.goNamed(AppRoutes.login);
               },
               width: width*0.85,
               height: height*0.06,
               buttonColor: AppColors.fieldColor,
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
               text: "Confirm Code"),
           SizedBox(height: 10,),
-
           AppText("Enter the code in 60 secs",
             type: AppTextType.caption,
-            color: AppColors.black,fontSize: 16,),
+            ),
         ]
 
 

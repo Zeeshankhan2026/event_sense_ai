@@ -1,10 +1,15 @@
+import 'dart:developer';
+
+import 'package:event_sense_ai/features/home_screen/create_event_screen.dart';
 import 'package:event_sense_ai/utils/app_assets.dart';
 import 'package:event_sense_ai/utils/app_icons.dart';
 import 'package:event_sense_ai/widgets/event_screen_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
 
+import '../../routes/app_routes.dart';
 import '../../utils/app_colors.dart';
 import '../../utils/app_text.dart';
 import '../../widgets/app_buttons.dart';
@@ -135,7 +140,9 @@ class _EventScreenState extends State<EventScreen> with SingleTickerProviderStat
 
                             return GestureDetector(
                               onTap: (){
-                                Navigator.of(context).push(MaterialPageRoute(builder: (context) => EventDetailsScreen()));
+                                context.pushNamed(
+                                 AppRoutes.eventDetails,
+                                );
                               },
                               child: Container(
 
@@ -265,6 +272,8 @@ class _EventScreenState extends State<EventScreen> with SingleTickerProviderStat
                       AppButtonWidget(
                         prefixIcon: Icon(Icons.add,color: Colors.white,size: 35,),
                           onPressed: (){
+                          log("message");
+                            context.pushNamed(AppRoutes.createEvent);
 
                           },
                           width: width*0.85,

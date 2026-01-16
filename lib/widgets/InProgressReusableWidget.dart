@@ -11,8 +11,10 @@ class InfoProgressCard extends StatelessWidget {
   final List<ProgressSegment>? segments; // optional for multi-color bars
   final Color backgroundColor;
   final Color textColor;
-
-  const InfoProgressCard({
+  bool? showSlashWithCaption;
+  bool showCaptionBelow;
+  bool showProgressPercent;
+   InfoProgressCard({
     Key? key,
     required this.title,
     required this.icons,
@@ -22,6 +24,9 @@ class InfoProgressCard extends StatelessWidget {
     this.segments,
     this.backgroundColor = Colors.white,
     this.textColor = Colors.black,
+     required  showSlashWithCaption,
+     required  this.showCaptionBelow,
+     required this.showProgressPercent,
   }) : super(key: key);
 
   @override

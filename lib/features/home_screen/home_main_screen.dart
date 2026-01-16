@@ -56,9 +56,11 @@ class HomeMainScreen extends StatelessWidget {
       countdown: '8 days',
     ),
   ];
+
+
   final List<IconTextButton> icontextbutton = [
     IconTextButton(
-      width: 100,
+      width: 110,
       height: 70,
       onPressed: (){},
       backgroundColor: Color(0xffCDEAF9),
@@ -90,10 +92,40 @@ class HomeMainScreen extends StatelessWidget {
         icon: AppIcons.guest_list
     ),
   ];
+
+ final List<DashboardTile> dashboardtile = [
+   DashboardTile(
+     textColor: AppColors.fieldColor,
+     width: 110,
+     height: 125,
+     backgroundColor: Color(0xFF96A2D5).withOpacity(0.5),
+     label: "Active events",
+     count: 12,
+     icon: AppIcons.event_icon,
+   ),
+   DashboardTile(
+     width: 110,
+     height: 125,
+     textColor: Color(0xFF3C9C5F),
+     backgroundColor: Color(0xFF3C9C5F).withOpacity(0.5),
+     label: "Confirm",
+     count: 85,
+     icon: AppIcons.people_icon,
+   ),
+   DashboardTile(
+     width: 110,
+     height: 125,
+     textColor: AppColors.primary,
+     backgroundColor: Color(0xFF8896B6).withOpacity(0.5),
+     label: "Vendors",
+     count: 7,
+     icon: AppIcons.star_icon,
+   ),
+ ];
+
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
-
     final width = MediaQuery.of(context).size.width;
     final height = MediaQuery.of(context).size.height;
     return Scaffold(
@@ -131,33 +163,59 @@ class HomeMainScreen extends StatelessWidget {
               const Gap(20),
 
               // Dashboard tiles
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  DashboardTile(
-                    size: 115,
-                    backgroundColor: AppColors.first_tile_color,
-                    label: "Active events",
-                    count: 12,
-                    icon: AppIcons.event_icon,
-                  ),
-                  DashboardTile(
-                    size: 115,
-                    backgroundColor: AppColors.second_tile_color,
-                    label: "Confirm",
-                    count: 85,
-                    icon: AppIcons.people_icon,
-                  ),
-                  DashboardTile(
-                    size: 115,
-                    backgroundColor: AppColors.third_tile_color,
-                    label: "Vendors",
-                    count: 7,
-                    icon: AppIcons.star_icon,
-                  ),
-                ],
-              ),
+              SizedBox(
+                height: 125,
+                width: width*1,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: dashboardtile.length,
 
+                    itemBuilder: (context,index)
+                    {
+                      final dashboard_tile = dashboardtile[index];
+                  return Row(
+                    children: [
+                      GestureDetector(
+                        onTap: dashboard_tile.onTap,
+                        child: Container(
+                          width: 110,
+                          height: 125,
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: dashboard_tile.backgroundColor,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Container(
+                                  width: 40,
+                                  height: 40,
+                                  decoration: BoxDecoration(
+                                      color: Colors.indigo,
+                                      borderRadius: BorderRadius.circular(20)
+                                  ),
+                                  child: Center(child: SvgPicture.asset(dashboard_tile.icon,width: 28,height: 26,))),
+                              AppText(
+                                "${dashboard_tile.count}",
+                                type: AppTextType.heading1Normal,
+                                color: dashboard_tile.textColor,
+                              ),
+                              AppText(
+                                dashboard_tile.label,
+                                type: AppTextType.caption,
+                                color: AppColors.black,
+                                textAlign: TextAlign.center,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Gap(20)
+                    ],
+                  );
+                }),
+              ),
               const Gap(10),
 
               // Upcoming events header
@@ -223,7 +281,7 @@ class HomeMainScreen extends StatelessWidget {
                                       children: [
                                         SvgPicture.asset(event.calender_image),
                                         Gap(4),
-                                        AppText(event.date,type: AppTextType.captionDark,),
+                                        AppText(event.date,type: AppTextType.caption,fontWeight: FontWeight.bold,),
 
                                       ],
                                     ),
@@ -235,7 +293,7 @@ class HomeMainScreen extends StatelessWidget {
                                           children: [
                                             SvgPicture.asset(event.location_icon),
                                             Gap(4),
-                                            AppText(event.location,type: AppTextType.captionDark,),
+                                            AppText(event.location,type: AppTextType.caption,fontWeight: FontWeight.bold,),
 
                                           ],
                                         ),
@@ -264,9 +322,9 @@ class HomeMainScreen extends StatelessWidget {
                                 children: [
                                   Row(
                                     children: [
-                                      SvgPicture.asset(event.peoples_image),
+                                      SvgPicture.asset(event.peoples_image,color: Colors.black38,),
                                       Gap(4),
-                                      AppText("${event.attendees}",type: AppTextType.captionDark,),
+                                      AppText("${event.attendees}",type: AppTextType.caption,fontWeight: FontWeight.bold,),
 
                                     ],
                                   ),
@@ -275,7 +333,7 @@ class HomeMainScreen extends StatelessWidget {
                                     children: [
                                       SvgPicture.asset(event.wallet),
                                       Gap(4),
-                                      AppText("\$ ${event.cost}",type: AppTextType.captionDark,color: AppColors.second_tile_color,),
+                                      AppText("\$ ${event.cost}",type: AppTextType.caption,color: AppColors.second_tile_color,fontWeight: FontWeight.bold,),
 
                                     ],
                                   ),
@@ -293,6 +351,7 @@ class HomeMainScreen extends StatelessWidget {
                   },
                 ),
               ),
+
               AppText("AI Assistant",type: AppTextType.heading4,color: AppColors.textGrey1,),
               GridView.builder(
                 itemCount: icontextbutton.length,
@@ -301,9 +360,9 @@ class HomeMainScreen extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2, // number of columns
-                  crossAxisSpacing: 12,
+                  crossAxisSpacing: 4,
                   mainAxisSpacing: 12,
-                  childAspectRatio: 2.5, // square tiles
+                  childAspectRatio: 2.4, // square tiles
                 ),
                 itemBuilder: (context, index) {
                   return InkWell(
@@ -328,7 +387,7 @@ class HomeMainScreen extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Container(
-                              width: 50,
+                              width: 40,
                               height: 90,
                               decoration: BoxDecoration(
                                   color:  icontextbutton[index].backgroundColor,

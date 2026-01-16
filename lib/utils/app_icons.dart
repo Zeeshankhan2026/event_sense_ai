@@ -19,4 +19,14 @@ class AppIcons {
   static final draft_invite = "assets/icons/draft_invit_icon.svg";
   static final vendors = "assets/icons/vendors.svg";
   static final guests = "assets/icons/guest.svg";
+  static final google_icon = "assets/icons/google_icon.svg";
+  static final weddingtype_icon = "assets/icons/weddingtype_event.svg";
+  static final partytype_icon = "assets/icons/partytype_event.svg";
+  static final concerttype_icon = "assets/icons/concerttype_event.svg";
+  static final conference_type_icon = "assets/icons/conferencetype_event.svg";
+  static final corporatetype_event_icon  = "assets/icons/corporatetype_event.svg";
+  static final othertype_icon = "assets/icons/othertype_event.svg";
+  static final checked_mark = "assets/icons/checkd_mark.svg";
+  static final catering_icon = "assets/icons/catering.svg";
+  static final decore_icon = "assets/icons/decor.svg";
 }

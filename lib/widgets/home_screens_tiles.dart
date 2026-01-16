@@ -9,7 +9,8 @@ class DashboardTile extends StatelessWidget {
   final Color backgroundColor;
   final Color textColor;
   final String icon;
-  final double size;
+  final double width;
+  final double height;
   final VoidCallback? onTap;
 
   const DashboardTile({
@@ -19,7 +20,8 @@ class DashboardTile extends StatelessWidget {
     required this.icon,
     this.backgroundColor = const Color(0xFF2F6FED),
     this.textColor = Colors.white,
-    this.size = 100,
+    required this.width,
+    required this.height,
     this.onTap,
   }) : super(key: key);
 
@@ -28,8 +30,8 @@ class DashboardTile extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: size,
-        height: size,
+        width: width,
+        height: height,
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
           color: backgroundColor,
@@ -48,16 +50,13 @@ class DashboardTile extends StatelessWidget {
                 child: Center(child: SvgPicture.asset(icon,width: 28,height: 26,))),
             AppText(
               "$count",
-              fontSize: 28,
-              fontWeight: FontWeight.w600,
-              type: AppTextType.caption,
-              color: AppColors.white,
-              textAlign: TextAlign.center,
+              type: AppTextType.heading1Normal,
+              color: textColor,
             ),
             AppText(
               label,
               type: AppTextType.caption,
-              color: AppColors.white,
+              color: AppColors.black,
               textAlign: TextAlign.center,
             ),
           ],

@@ -29,9 +29,8 @@ class WelcomeScreen  extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           AppText("How are you planing?",
-            fontSize: 20,
-            color: Colors.indigo,
-            type: AppTextType.xlSuperBold,),
+             color: Colors.indigo,
+            fontSize: 20 ,fontWeight: FontWeight.w700,),
           SizedBox(height: 10,),
          AppText("We'll customize  AI tools based on \n your needs",
          textAlign: TextAlign.center,
@@ -52,7 +51,7 @@ class WelcomeScreen  extends StatelessWidget {
               children: [
                 Container(
                   width: width*0.65,
-                  height: height*0.18,
+                  height: height*0.19,
                   child: Padding(
                     padding: const EdgeInsets.all(12.0),
                     child: Column(
@@ -75,10 +74,9 @@ class WelcomeScreen  extends StatelessWidget {
                     ),
                   ),
                 ),
-                SizedBox(width: 5,),
                 Container(
-                  width: width*0.27,
-                  height: height*0.145,
+                  width: width*0.28,
+                  height: height*0.140,
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(12),
                     child: Image.asset(
@@ -90,7 +88,7 @@ class WelcomeScreen  extends StatelessWidget {
           SizedBox(height: 20,),
           Container(
             width: width*0.95,
-            height: height*0.18,
+            height: height*0.19,
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(12),
                 border: BoxBorder.all(
@@ -126,10 +124,10 @@ class WelcomeScreen  extends StatelessWidget {
                     ),
                   ),
                 ),
-                SizedBox(width: 5,),
+
             SizedBox(
-              width: width*0.27,
-              height: height*0.145,
+              width: width*0.280,
+              height: height*0.140,
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(12), // Apply radius here
                 child: Image.asset(
