@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../widgets/app_text_style.dart';
+import '../core/widgets/app_text_style.dart';
 
 enum AppTextType {
   xlNormal,

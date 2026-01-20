@@ -29,4 +29,9 @@ class AppIcons {
   static final checked_mark = "assets/icons/checkd_mark.svg";
   static final catering_icon = "assets/icons/catering.svg";
   static final decore_icon = "assets/icons/decor.svg";
+  static final scan_icon = "assets/icons/scan_icon.svg";
+  static final vender_icon = "assets/icons/vender_icon.svg";
+  static final guest_list_icon = "assets/icons/guest_listt.svg";
+  static final invitaion_icon = "assets/icons/invitation_icons.svg";
+  static final budget_allocation = "assets/icons/budget_allocation_icon.svg";
 }

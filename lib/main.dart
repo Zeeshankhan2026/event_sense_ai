@@ -1,7 +1,7 @@
-import 'package:event_sense_ai/features/auth_screens/welcome_screen.dart';
-import 'package:event_sense_ai/routes/go_router.dart';
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
+
+import 'core/routes/go_router.dart';
 
 void main() {
   runApp(const MyApp());
@@ -16,9 +16,11 @@ class MyApp extends StatelessWidget {
     return Sizer(
       builder: (context, orientation, deviceType){
         return  MaterialApp.router(
+
           debugShowCheckedModeBanner: false,
           title: 'Flutter Demo',
           theme: ThemeData(
+            scaffoldBackgroundColor: Colors.white,
             colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
           ),
           routerConfig: appRouter,

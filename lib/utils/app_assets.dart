@@ -8,4 +8,23 @@ class AppAssets {
    static final person_image = "assets/images/person_image.png";
    static final wedding_image = "assets/images/weddings.png";
    static final wedding_image2 = "assets/images/wedding_receptiion2.png";
+   static final share_card_image = "assets/images/ share_card_image.png";
+   static final generate_card_image = "assets/images/generate_car_image.png";
+   static final Floral_image = "assets/images/Floral.png";
+   static final Minimal_image = "assets/images/Minimal.png";
+   static final Retro_image = "assets/images/Retro.png";
+   static final Invitaion_design  = "assets/images/invitaion_designs.png";
+   static final vendor_banner  = "assets/images/vendor_banner.png";
+   static final google_path_images  = "assets/images/google_path_img.png";
+   static final portfolio_1  = "assets/images/portfolio_1.png";
+   static final portfolio_2  = "assets/images/portfolio_2.png";
+   static final portfolio_3  = "assets/images/portfolio_3.png";
+   static final vendor_profile  = "assets/images/vendor_profile.png";
+   static final wedding_reception2  = "assets/images/wedding_receptiion2.png";
+   static final activeJob_image  = "assets/images/active_jobs.png";
+   static final person_1  = "assets/images/person_1.png";
+   static final person_2  = "assets/images/person_2.png";
+   static final person_3  = "assets/images/person_3.png";
+   static final event_recent_1  = "assets/images/recent_event_1.png";
+   static final event_recent_2  = "assets/images/recent_event_2.png";
 }

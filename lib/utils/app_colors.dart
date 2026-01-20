@@ -9,6 +9,7 @@ class AppColors {
   static const Color first_tile_color = Color(0xFF96A2D5);
   static const Color second_tile_color = Color(0xFF3C9C5F);
   static const Color third_tile_color = Color(0xFF8896B6);
+  static const Color bottomNavItemColor = Color(0xFF1B2A57);
 
   static const Color textPrimary = Color(0xFF6C5CE7);
   static const Color textSecondary = Color(0xFF4F5B67);
@@ -24,6 +25,7 @@ class AppColors {
 
   static const Color surfaceDark = Color(0xFF15223A);
   static const Color fieldColor = Color(0xFF2f379c);
+  static const Color greenAccent = Colors.greenAccent;
 
   static const Color white = Colors.white;
   static const Color black = Colors.black;
