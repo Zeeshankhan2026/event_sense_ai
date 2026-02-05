@@ -1,6 +1,7 @@
 import 'package:event_sense_ai/utils/app_assets.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 
 import '../../../core/routes/app_routes.dart';
 import '../../../core/widgets/apptext.dart';
@@ -49,7 +50,7 @@ class VendorSetLocation extends StatelessWidget {
                 ,  const SizedBox(height: 20),
                   ElevatedButton(
                     onPressed: () {
-                     context.pushNamed(AppRoutes.VendorConfirmLocation);
+                      Get.toNamed(AppRoutes.vendorConfirmLocation);
                       // Add location picker logic here
                     },
                     style: ElevatedButton.styleFrom(

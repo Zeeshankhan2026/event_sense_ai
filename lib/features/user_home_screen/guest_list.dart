@@ -1,16 +1,23 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:event_sense_ai/core/controller/guest_controller.dart';
 import 'package:event_sense_ai/utils/app_assets.dart';
 import 'package:event_sense_ai/utils/app_colors.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
-import 'package:go_router/go_router.dart';
+import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
-
+import '../../core/enums/status_enum.dart';
+import '../../core/models/guest_model.dart';
 import '../../core/routes/app_routes.dart';
 import '../../core/widgets/app_buttons.dart';
 import '../../core/widgets/apptext.dart';
 import '../../core/widgets/custom_headerbar.dart';
 import '../../core/widgets/search_widget.dart';
+import '../../utils/app_icons.dart';
 import 'components/guest_reusable_widget.dart';
+import 'components/status_summary_card.dart';
+
 
 class GuestList extends StatefulWidget {
   const GuestList({super.key});
@@ -21,64 +28,15 @@ class GuestList extends StatefulWidget {
 
 class _GuestListState extends State<GuestList> {
   final TextEditingController searchController = TextEditingController();
-
-  late List<ProfileStatusCard> allGuests;
-  late List<ProfileStatusCard> filteredGuests;
-
   FilterType selectedFilter = FilterType.all;
+
+  final eventId = Get.arguments;
+  final guestController = Get.find<GuestController>();
 
   @override
   void initState() {
     super.initState();
-
-    allGuests = [
-      ProfileStatusCard(
-        name: "Sara Jenkis",
-        role: "Sent 2d ago",
-        status: "Pending",
-        status_icon: Icons.warning,
-        statusColor: AppColors.first_tile_color,
-        profileImage:  AssetImage(AppAssets.wedding_image2),
-        roleIcon: Icons.email_outlined,
-      ),
-      ProfileStatusCard(
-        name: "Tara Jenkis",
-        role: "+1 (Partner)",
-        status: "Accepted",
-        status_icon: Icons.check,
-        roleIcon: Icons.person_outline,
-        statusColor: AppColors.second_tile_color,
-        profileImage:  AssetImage(AppAssets.wedding_image2),
-      ),
-      ProfileStatusCard(
-        name: "Dev Jenkis",
-        role: "Out of town",
-        status: "Declined",
-        status_icon: Icons.cancel_outlined,
-        statusColor: AppColors.emergencyColor,
-        roleIcon: Icons.cancel_outlined,
-        profileImage:  AssetImage(AppAssets.wedding_image2),
-      ),
-    ];
-
-    filteredGuests = List.from(allGuests);
-
-    searchController.addListener(_onSearchChanged);
-  }
-
-  void _onSearchChanged() {
-    final query = searchController.text.toLowerCase();
-
-    setState(() {
-      if (query.isEmpty) {
-        filteredGuests = List.from(allGuests);
-      } else {
-        filteredGuests = allGuests
-            .where((guest) =>
-            guest.name.toLowerCase().contains(query))
-            .toList();
-      }
-    });
+    searchController.addListener(() => setState(() {}));
   }
 
   void _onFilterSelected(FilterType type) {
@@ -93,9 +51,26 @@ class _GuestListState extends State<GuestList> {
     super.dispose();
   }
 
+  List<String> tiles_list = ["Invite", "Accepted", "Pending", "Declined"];
+
+
+  Color _getStatusColor(GuestStatus status) {
+    switch (status) {
+      case GuestStatus.accepted:
+        return AppColors.second_tile_color;
+      case GuestStatus.rejected:
+        return AppColors.accent;
+      case GuestStatus.pending:
+      default:
+        return AppColors.emergencyColor;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: true,
+
       backgroundColor: Colors.white,
       body: SafeArea(
         child: Padding(
@@ -106,12 +81,11 @@ class _GuestListState extends State<GuestList> {
               CustomHeaderBar(
                 title: "Guest Management",
                 showBackButton: true,
-                onBack: () => context.pop(),
+                onBack: () => Get.back(),
               ),
               Gap(1.w),
               SearchWidget(searchController: searchController),
               Gap(3.w),
-
               Wrap(
                 spacing: 8,
                 children: [
@@ -145,116 +119,161 @@ class _GuestListState extends State<GuestList> {
                   ),
                 ],
               ),
+              Gap(2.w),
 
-              Gap(3.w),
+              StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+                stream: guestController.FetchGuest(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const SizedBox(
+                        child: Center(child: CircularProgressIndicator()));
+                  }
+                  if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                    return const SizedBox(
+                        child: Center(child: Text("no data found")));
+                  }
 
-              AppText("All Guests (${filteredGuests.length})",
-                  type: AppTextType.heading3),
-              Gap(1.h),
+                  final allGuests = snapshot.data!.docs.map((doc) => GuestModel.fromJson(doc.data())).toList();
 
-              Expanded(
-                child: filteredGuests.isEmpty
-                    ? const Center(
-                  child: Text(
-                    "No guest found",
-                    style: TextStyle(color: Colors.grey),
-                  ),
-                )
-                    : ListView.builder(
-                  itemCount: filteredGuests.length,
-                  itemBuilder: (context, index) {
-                    final guest = filteredGuests[index];
+                  final invitedCount = allGuests.length;
+                  final acceptedCount = allGuests.where((g) => g.status == GuestStatus.accepted).length;
 
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: 12),
-                      child: Row(
+                  final pendingCount = allGuests.where((g) => g.status == GuestStatus.pending).length;
+
+                  final declinedCount = allGuests.where((g) => g.status == GuestStatus.rejected).length;
+
+                  final query = searchController.text.toLowerCase();
+                  final filteredGuests = allGuests.where((guest) {
+                    final matchesSearch =
+                        guest.guestName.toLowerCase().contains(query);
+                    bool matchesFilter = true;
+                    if (selectedFilter == FilterType.accepted) {
+                      matchesFilter = guest.status == GuestStatus.accepted;
+                    } else if (selectedFilter == FilterType.declined) {
+                      matchesFilter = guest.status == GuestStatus.rejected;
+                    } else if (selectedFilter == FilterType.pending) {
+                      matchesFilter = guest.status == GuestStatus.pending;
+                    }
+                    return matchesSearch && matchesFilter;
+                  }).toList();
+
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          SizedBox(
-                            height: 8.h,
-                            width: 20.w,
-                            child: Stack(
-                              children: [
-                                 CircleAvatar(
-                                  radius: 32,
-                                  backgroundImage: AssetImage(
-                                      AppAssets.wedding_image2),
-                                ),
-                                Positioned(
-                                  top: 5.h,
-                                  left: 12.w,
-                                  child: Container(
-                                    height: 20,
-                                    width: 20,
-                                    decoration: BoxDecoration(
-                                      color: guest.statusColor,
-                                      borderRadius:
-                                      BorderRadius.circular(12),
-                                    ),
-                                    child: Icon(
-                                      guest.status_icon,
-                                      size: 14,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
+                          StatusSummaryCard(
+                            value: invitedCount.toString(),
+                            label: "Invited",
+                            valueColor: Colors.black,
                           ),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment:
-                              CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  guest.name,
-                                  style: const TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                                const SizedBox(height: 4),
-                                Row(
-                                  children: [
-                                    Icon(guest.roleIcon,
-                                        size: 14,
-                                        color: Colors.grey),
-                                    const SizedBox(width: 4),
-                                    Text(
-                                      guest.role,
-                                      style: const TextStyle(
-                                        fontSize: 12,
-                                        color: Colors.grey,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
+                          StatusSummaryCard(
+                            value: acceptedCount.toString(),
+                            label: "Accepted",
+                            valueColor: Colors.green,
                           ),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 10, vertical: 6),
-                            decoration: BoxDecoration(
-                              color:
-                              guest.statusColor.withOpacity(0.1),
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: AppText(
-                              guest.status,
-                              fontSize: 12,
-                              fontWeight: FontWeight.w500,
-                            ),
+                          StatusSummaryCard(
+                            value: pendingCount.toString(),
+                            label: "Pending",
+                            valueColor: Colors.red,
+                          ),
+                          StatusSummaryCard(
+                            value: declinedCount.toString(),
+                            label: "Declined",
+                            valueColor: Colors.purple,
                           ),
                         ],
                       ),
-                    );
-                  },
-                ),
-              ),
+                      Gap(1.h),
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFEAF2FF),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: const Color(0xFF4D8DFF)),
+                        ),
+                        child: Row(
+                          children: [
+                            SvgPicture.asset(
+                              AppIcons.light_icon,
+                              color: Colors.indigo,
+                            ),
+                            const SizedBox(width: 10),
+                            SizedBox(
+                              width: 60.w,
+                              height: 8.h,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const AppText('AI Guest Scan',
+                                      fontWeight: FontWeight.bold,fontSize: 14,),
 
+                                  AppText(
+                                      "$pendingCount guests haven’t opened their invite yet. "
+                                          "Consider sending a reminder.",
+                                      fontWeight: FontWeight.w500,fontSize: 13,),
+                                ],
+                              ),
+                            ),
+                            Gap(1.h),
+                            Container(
+                                height: 5.h,
+                                width: 12.w,
+                                decoration: BoxDecoration(
+                                    color: AppColors.fieldColor,
+                                    borderRadius: BorderRadius.circular(22)),
+                                child: IconButton(
+                                    onPressed: () {},
+                                    icon: const Icon(
+                                      Icons.arrow_forward_rounded,
+                                      color: Colors.white,
+                                      size: 20,
+                                    ))),
+                          ],
+                        ),
+                      ),
+                      Gap(1.h),
+                      AppText("All Guests (${filteredGuests.length})",
+                          type: AppTextType.heading3),
+                      Gap(1.h),
+                      SizedBox(
+                        height: 28.h,
+                        width: 80.w,
+                        child: filteredGuests.isEmpty
+                            ? const Center(
+                                child: Text(
+                                  "No guest found",
+                                  style: TextStyle(color: Colors.grey),
+                                ),
+                              )
+                            : ListView.builder(
+                                itemCount: filteredGuests.length,
+                                itemBuilder: (context, index) {
+                                  final guest = filteredGuests[index];
+                                  return GuestReusableWidget(
+                                    name: guest.guestName,
+                                    role: guest.guestCategory,
+                                    status:
+                                        guest.status.name.capitalizeFirst!,
+                                    statusColor:
+                                        _getStatusColor(guest.status),
+                                    profileImage: AssetImage(
+                                        AppAssets.wedding_image2),
+                                  );
+                                },
+                              ),
+                      ),
+                    ],
+                  );
+                },
+              ),
+              Spacer(),
               AppButtonWidget(
                 onPressed: () {
-                  context.pushNamed(AppRoutes.AddGuest);
+                  Get.toNamed(AppRoutes.addGuest, arguments: {
+                    "eventId" : eventId is Map ? eventId["eventId"] : eventId,
+                  });
                 },
                 prefixIcon:
                 const Icon(Icons.add, color: Colors.white),

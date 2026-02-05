@@ -18,13 +18,16 @@ class AppFormField extends StatelessWidget {
   final bool readOnly;
   final int? wordCount,maxLength;
   final bool showBorder;
+  final bool showPretixIcon ;
   final Color? focusedBorderColor,borderColor;
+  final Widget? iconWidget;
 
 
-  const AppFormField({
+   AppFormField({
     super.key,
     required this.title,
     this.prefic_icons,
+    this.showPretixIcon = false,
     this.icon,
     this.isObsecured = false,
     this.readOnly = false,
@@ -38,6 +41,7 @@ class AppFormField extends StatelessWidget {
     this.maxLength,
     this.showBorder = false,
     this.focusedBorderColor,
+     this.iconWidget,
 
   });
 
@@ -69,6 +73,7 @@ class AppFormField extends StatelessWidget {
       obscureText: isObsecured,
       maxLines: isMultiline ? 5 : 1,
       decoration: InputDecoration(
+        prefixIcon: showPretixIcon?  Icon(prefic_icons,color: Colors.grey.shade500,) : null,
         filled: true,
         hintText: title,
         hintStyle: TextStyle(
@@ -105,7 +110,7 @@ class AppFormField extends StatelessWidget {
         )
             : InputBorder.none,
 
-        suffixIcon: GestureDetector(onTap: onTap, child: Icon(icon, size: 25, color: AppColors.primary,)),
+        suffixIcon: GestureDetector(onTap: onTap, child: iconWidget ?? Icon(icon, size: 25, color: AppColors.primary,)),
       ),
     );
   }

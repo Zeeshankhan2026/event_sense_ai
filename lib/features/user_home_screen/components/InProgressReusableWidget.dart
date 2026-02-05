@@ -1,105 +1,146 @@
+import 'package:event_sense_ai/core/widgets/apptext.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
-import '../../../core/widgets/apptext.dart';
 
-class InfoProgressCard extends StatelessWidget {
-  final String title;
-  final String mainValue;
-  final String icons;
-  final String caption;
-  final double progress; // 0.0 to 1.0
-  final List<ProgressSegment>? segments; // optional for multi-color bars
-  final Color backgroundColor;
-  final Color textColor;
-  bool? showSlashWithCaption;
-  bool showCaptionBelow;
-  bool showProgressPercent;
-   InfoProgressCard({
-    Key? key,
-    required this.title,
-    required this.icons,
-    required this.mainValue,
-    required this.caption,
-    required this.progress,
-    this.segments,
-    this.backgroundColor = Colors.white,
-    this.textColor = Colors.black,
-     required  showSlashWithCaption,
-     required  this.showCaptionBelow,
-     required this.showProgressPercent,
-  }) : super(key: key);
+
+class TotalGuestsCard extends StatelessWidget {
+  final int total;
+  final int max;
+  final double yesPercent;
+  final double maybePercent;
+  final double noPercent;
+
+  const TotalGuestsCard({
+    super.key,
+    required this.total,
+    required this.max,
+    required this.yesPercent,
+    required this.maybePercent,
+    required this.noPercent,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 160,
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: backgroundColor,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.06),
-            blurRadius: 6,
-            offset: const Offset(0, 3),
-          ),
-        ],
-      ),
+    return DashboardStatCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          /// Header
           Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              AppText(title, type: AppTextType.bodyTextBold,),
-              Spacer(),
-              SvgPicture.asset(icons),
+              AppText("Total Guests",  fontSize: 14,
+                fontWeight: FontWeight.w500,
+                color: Colors.grey,),
+              const Icon(Icons.group_outlined, size: 20),
             ],
           ),
-          const SizedBox(height: 8),
-          Row(
-            children: [
-              AppText(mainValue, type: AppTextType.heading2,),
-              AppText("/", type: AppTextType.heading1,),
 
-              AppText("100", type: AppTextType.caption,),
-            ],
-          ),
-          const SizedBox(height: 4),
-          segments != null
-              ? Row(
-            children: segments!
-                .map((seg) => Expanded(
-              flex: seg.flex,
-              child: Container(
-                height: 8,
-                margin: const EdgeInsets.only(right: 2),
-                decoration: BoxDecoration(
-                  color: seg.color,
-                  borderRadius: BorderRadius.circular(4),
+          const SizedBox(height: 12),
+
+          /// Count
+          RichText(
+            text: TextSpan(
+              children: [
+                TextSpan(
+                  text: '$total',
+                  style: const TextStyle(
+                    fontSize: 26,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
                 ),
-              ),
-            ))
-                .toList(),
-          )
-              : ClipRRect(
-            borderRadius: BorderRadius.circular(4),
-            child: LinearProgressIndicator(
-              value: progress,
-              minHeight: 8,
-              backgroundColor: Colors.grey.shade300,
-              valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
+                TextSpan(
+                  text: ' / $max',
+                  style: const TextStyle(
+                    fontSize: 14,
+                    color: Colors.grey,
+                  ),
+                ),
+              ],
             ),
+          ),
+
+          const SizedBox(height: 34),
+
+          /// Progress Bar
+          ClipRRect(
+            borderRadius: BorderRadius.circular(6),
+            child: Row(
+              children: [
+                _bar(yesPercent, Colors.green),
+                _bar(maybePercent, Colors.orange),
+                _bar(noPercent, Colors.grey.shade300),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 10),
+
+          /// Legend
+          Row(
+            children: const [
+              _LegendDot(label: 'Yes', color: Colors.green),
+              SizedBox(width: 6),
+              _LegendDot(label: 'Maybe', color: Colors.orange),
+              SizedBox(width: 6),
+              _LegendDot(label: 'No', color: Colors.grey),
+            ],
           ),
         ],
       ),
     );
   }
+
+  Widget _bar(double value, Color color) {
+    return Expanded(
+      flex: (value * 100).toInt(),
+      child: Container(height: 8, color: color),
+    );
+  }
 }
 
-class ProgressSegment {
-  final int flex;
+class _LegendDot extends StatelessWidget {
+  final String label;
   final Color color;
 
-  const ProgressSegment({required this.flex, required this.color});
+  const _LegendDot({
+    required this.label,
+    required this.color,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        CircleAvatar(radius: 4, backgroundColor: color),
+        const SizedBox(width: 6),
+        Text(
+          label,
+          style: const TextStyle(fontSize: 12, color: Colors.grey),
+        ),
+      ],
+    );
+  }
+}
+class DashboardStatCard extends StatelessWidget {
+  final Widget child;
+
+  const DashboardStatCard({
+    super.key,
+    required this.child,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: const Color(0xffEAEAEA)),
+      ),
+      child: child,
+    );
+  }
 }

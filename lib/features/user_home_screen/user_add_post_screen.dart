@@ -1,13 +1,18 @@
+import 'package:event_sense_ai/core/controller/planner_category_controller.dart';
+import 'package:event_sense_ai/core/models/event_category_model.dart';
+import 'package:event_sense_ai/core/widgets/app_buttons.dart';
+import 'package:event_sense_ai/features/user_home_screen/components/job_resuable_cad.dart';
 import 'package:event_sense_ai/utils/app_colors.dart';
 import 'package:event_sense_ai/utils/app_icons.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
-import 'package:go_router/go_router.dart';
+import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
-
 import '../../core/widgets/apptext.dart';
 import '../../core/widgets/custom_headerbar.dart';
+
 
 class UserPostJobScreen extends StatefulWidget {
   const UserPostJobScreen({super.key});
@@ -17,11 +22,75 @@ class UserPostJobScreen extends StatefulWidget {
 }
 
 class _UserPostJobScreenState extends State<UserPostJobScreen> {
+
+  final controller = Get.find<PlannerCategoryController>();
+
   RangeValues budgetRange = const RangeValues(500, 2900);
-  final TextEditingController jobDescriptionController =
-      TextEditingController();
-  final TextEditingController specialInstructionController =
-      TextEditingController();
+
+
+  late double selectedBudget;
+  late double minBudget;
+  late double maxBudget;
+  
+  // Track initial values to check for changes
+  late double _initialBudget;
+  String _initialDescription = "";
+  String _initialInstructions = "";
+  bool _hasChanges = false;
+
+  final args = Get.arguments as Map<String, dynamic>;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    final int recommended = args["categoryBudget"];
+
+    //  enhanced flexible range
+    minBudget = (recommended * 0.6).clamp(200, recommended).toDouble();
+    maxBudget = (recommended * 1.4).toDouble();
+
+    // default = recommended
+    selectedBudget = recommended.toDouble();
+    _initialBudget = selectedBudget; // Initialize
+
+
+    controller.loadCategoryJob(args["eventId"], args["category"]).then((_) {
+      if (controller.selectedBudget.value > 0) {
+        if (mounted) {
+          setState(() {
+            selectedBudget = controller.selectedBudget.value;
+            _initialBudget = selectedBudget;
+            
+            _initialDescription = controller.jobDescriptionC.text;
+            _initialInstructions = controller.specialInsC.text;
+            
+            args["categoryBudget"] = selectedBudget.round();
+            if (selectedBudget > maxBudget) maxBudget = selectedBudget;
+            if (selectedBudget < minBudget) minBudget = selectedBudget;
+          });
+        }
+      } else {
+         // Should track initial values even if no previous job (defaults)
+         if(mounted) {
+            setState(() {
+               _initialBudget = selectedBudget;
+            });
+         }
+      }
+    });
+
+    // Listen to text changes
+    controller.jobDescriptionC.addListener(_checkForChanges);
+    controller.specialInsC.addListener(_checkForChanges);
+  }
+
+  int? _calculateDivisions() {
+    final diff = maxBudget - minBudget;
+    if (diff <= 0) return null;
+    return (diff ~/ 50).clamp(1, 1000);
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -32,9 +101,11 @@ class _UserPostJobScreenState extends State<UserPostJobScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Gap(2.h),
             CustomHeaderBar(title: "New Request", showBackButton: true,onBack: (){
-              context.pop();
+              Navigator.of(context).pop();
             },),
+            Gap(1.h),
             // Event Details
             Container(
               height: 20.h,
@@ -64,11 +135,15 @@ class _UserPostJobScreenState extends State<UserPostJobScreen> {
                         color: Colors.grey.shade500,
                       ),
                       SizedBox(height: 4),
-                      AppText(
-                        "Wedding 2025",
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.grey.shade900,
+                      SizedBox(
+                        width: 40.w,
+                        child: AppText(
+                          overflow: TextOverflow.ellipsis,
+                          args["eventName"],
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.grey.shade900,
+                        ),
                       ),
                       Spacer(),
                       AppText(
@@ -79,8 +154,8 @@ class _UserPostJobScreenState extends State<UserPostJobScreen> {
                       ),
                       SizedBox(height: 4),
                       AppText(
-                        "Oct 24, 2024",
-                        fontSize: 18,
+                        args["eventStartDate"],
+                        fontSize: 15,
                         fontWeight: FontWeight.w600,
                         color: Colors.grey.shade900,
                       ),
@@ -104,11 +179,15 @@ class _UserPostJobScreenState extends State<UserPostJobScreen> {
                             height: 18,
                           ),
                           Gap(1.w),
-                          AppText(
-                            "Catering",
-                            fontSize: 18,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.grey.shade900,
+                          SizedBox(
+                            width: 30.w,
+                            child: AppText(
+                              args["category"],
+                              fontSize: 15,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.grey.shade900,
+                              overflow: TextOverflow.ellipsis,
+                            ),
                           ),
                         ],
                       ),
@@ -120,11 +199,15 @@ class _UserPostJobScreenState extends State<UserPostJobScreen> {
                         color: Colors.grey.shade500,
                       ),
                       SizedBox(height: 4),
-                      AppText(
-                        "San Francisco",
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.grey.shade900,
+                      SizedBox(
+                        width: 35.w,
+                        child: AppText(
+                          overflow: TextOverflow.ellipsis,
+                          args["eventLocation"],
+                          fontSize: 15,
+                          fontWeight: FontWeight.w800,
+                          color: Colors.grey.shade900,
+                        ),
                       ),
                     ],
                   ),
@@ -133,7 +216,7 @@ class _UserPostJobScreenState extends State<UserPostJobScreen> {
             ),
             const SizedBox(height: 24),
 
-            // Requirements
+            // // Requirements
             const Text(
               "Requirements",
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
@@ -157,59 +240,70 @@ class _UserPostJobScreenState extends State<UserPostJobScreen> {
                 children: [
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: const [
+                    children: [
+                      const Text(
+                        "Budget",
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      ),
                       Text(
-                        "Budget Range",
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
+                        "\$${selectedBudget.toInt()}",
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.green,
                         ),
                       ),
-                      Text(
-                        "\$500 - \$2,000",
-                        style: TextStyle(fontSize: 14, color: Colors.grey),
-                      ),
+
                     ],
                   ),
-                  const SizedBox(height: 16),
-                  RangeSlider(
-                    values: budgetRange,
-                    min: 500,
-                    max: 2900,
-                    divisions: 48,
-                    labels: RangeLabels(
-                      "\$${budgetRange.start.round()}",
-                      "\$${budgetRange.end.round()}",
+                  const SizedBox(height: 10),
+
+                  SliderTheme(
+                    data: SliderTheme.of(context).copyWith(
+                      trackHeight: 6,
+                      thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 10),
+                      overlayShape: const RoundSliderOverlayShape(overlayRadius: 20),
+                      activeTrackColor: AppColors.fieldColor,
+                      inactiveTrackColor: Colors.grey.shade300,
                     ),
-                    onChanged: (values) {
-                      setState(() {
-                        budgetRange = values;
-                      });
-                    },
+                    child: Slider(
+                      min: minBudget,
+                      max: maxBudget,
+                      value: selectedBudget.clamp(minBudget, maxBudget),
+                      divisions: _calculateDivisions(),
+                      label: "\$${selectedBudget.round()}",
+                      onChanged: (value) {
+                        setState(() {
+                          selectedBudget = value;
+                          args["categoryBudget"] = value.round();
+                          _checkForChanges();
+                        });
+                      },
+                    ),
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: const [
-                      Text(
-                        "\$1K",
-                        style: TextStyle(fontSize: 12, color: Colors.grey),
-                      ),
-                      Text(
-                        "\$2K",
-                        style: TextStyle(fontSize: 12, color: Colors.grey),
-                      ),
-                    ],
+
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 4),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text("\$${minBudget.toInt()}"),
+                        Text("\$${maxBudget.toInt()} (recommended)"),
+                      ],
+                    ),
                   ),
                 ],
               ),
+
             ),
             const SizedBox(height: 24),
 
             // Job Description
+
             buildTextField(
               label: "Job Description",
               hint: "Describe what you need...",
-              controller: jobDescriptionController,
+              controller: controller.jobDescriptionC,
             ),
             const SizedBox(height: 16),
 
@@ -217,7 +311,7 @@ class _UserPostJobScreenState extends State<UserPostJobScreen> {
             buildTextField(
               label: "Special Instruction",
               hint: "Gate codes, parking info, dietary restrictions...",
-              controller: specialInstructionController,
+              controller: controller.specialInsC,
             ),
             const SizedBox(height: 32),
 
@@ -234,19 +328,36 @@ class _UserPostJobScreenState extends State<UserPostJobScreen> {
                 ),
                 const SizedBox(width: 16),
                 Expanded(
-                  child: ElevatedButton(
-                    onPressed: () {
-                      // Post job logic
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.indigo.shade900,
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                    ),
-                    child: const Text(
-                      "Post Job",
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  ),
+                  child: Obx((){
+                    return AppButtonWidget(
+                        onPressed: (controller.isLoading.value || !_hasChanges) ? null :  () async {
+                          final plannerId = FirebaseAuth.instance.currentUser!.uid;
+
+                          controller.postCategoryAsJob(
+                              category: EventCategoryModel(
+                                  jobDescription: controller.jobDescriptionC.text,
+                                  jobInstructions: controller.specialInsC.text,
+                                  categoryId: args["category"],
+                                  eventId: args["eventId"],
+                                  guests: args["guests"],
+                                  title: args["eventName"],
+                                  eventDate: args["eventStartDate"],
+                                  recommendedBudget: args["categoryBudget"],
+                                  eventType: args["type"],
+                                  status: JobStatus.posted),
+
+                              plannerId: plannerId,
+                              city: args["eventLocation"]);
+
+                        },
+                        loader: controller.isLoading.value,
+                        width: 40.w,
+                        height: 6.h,
+                        buttonColor: AppColors.fieldColor,
+                        radius: 30,
+                        text: controller.buttonText.value);
+                  }
+                  )
                 ),
               ],
             ),
@@ -254,6 +365,22 @@ class _UserPostJobScreenState extends State<UserPostJobScreen> {
         ),
       ),
     );
+  }
+  
+  void _checkForChanges() {
+     if (!mounted) return;
+     
+     final isBudgetChanged = (selectedBudget - _initialBudget).abs() > 1.0; // Tolerance
+     final isDescChanged = controller.jobDescriptionC.text != _initialDescription;
+     final isInstChanged = controller.specialInsC.text != _initialInstructions;
+     
+     final hasChanges = isBudgetChanged || isDescChanged || isInstChanged;
+     
+     if (_hasChanges != hasChanges) {
+        setState(() {
+           _hasChanges = hasChanges;
+        });
+     }
   }
 
   Widget buildEventDetail(String label, String value) {

@@ -3,12 +3,12 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 class CustomCircleAvatar extends StatelessWidget {
   final String? imageUrl;      // optional network image
-  final String assetImage;     // fallback asset image
+  late String? assetImage;     // fallback asset image
   final double radius;         // avatar size
   final Color borderColor;     // border color
   final double borderWidth;    // border thickness
 
-  const CustomCircleAvatar({
+   CustomCircleAvatar({
     Key? key,
     this.imageUrl,
     required this.assetImage,
@@ -28,10 +28,19 @@ class CustomCircleAvatar extends StatelessWidget {
       child: CircleAvatar(
         radius: radius,
         backgroundColor: Colors.grey[200],
-        child: imageUrl != null && imageUrl!.isNotEmpty
-            ? Image.network(imageUrl!)
-            : SvgPicture.asset(assetImage,),
+        backgroundImage: imageUrl != null && imageUrl!.isNotEmpty
+            ? NetworkImage(imageUrl!)
+            : null,
+        child: imageUrl == null || imageUrl!.isEmpty
+            ? SvgPicture.asset(
+          assetImage!,
+          width: radius,
+          height: radius,
+          fit: BoxFit.contain,
+        )
+            : null,
       ),
+
     );
   }
 }

@@ -2,6 +2,8 @@ import 'package:event_sense_ai/features/user_home_screen/components/chat_tile_wi
 import 'package:event_sense_ai/utils/app_assets.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/widgets/custom_headerbar.dart';
@@ -86,7 +88,7 @@ class _VendorMessageScreenState extends State<VendorMessageScreen> {
               CustomHeaderBar(
                 title: "Messages",
                 showBackButton: true,
-                onBack: () => context.pop(),
+                onBack: () => Navigator.of(context).pop(),
               ),
 
               const Gap(16),

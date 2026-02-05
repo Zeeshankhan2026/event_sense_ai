@@ -2,6 +2,8 @@ import 'package:event_sense_ai/utils/app_assets.dart';
 import 'package:event_sense_ai/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sizer/sizer.dart';
 
@@ -24,7 +26,7 @@ class NewRequestDetails extends StatelessWidget {
             child: Column(
               children: [
                 CustomHeaderBar(title: "Booking Details",showBackButton: true,onBack: (){
-                  context.pop();
+                  Navigator.of(context).pop();
                 },),
                 Gap(2.w),
                 Column(

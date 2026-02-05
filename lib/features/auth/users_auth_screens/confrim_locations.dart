@@ -1,5 +1,7 @@
 import 'package:event_sense_ai/utils/app_assets.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/routes/app_routes.dart';
@@ -76,7 +78,7 @@ class UserConfirmLocation  extends StatelessWidget {
                       width: double.infinity,
                       child: ElevatedButton(
                         onPressed: () {
-                          context.pushNamed(AppRoutes.main);
+                          Get.toNamed(AppRoutes.main);
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.indigo,

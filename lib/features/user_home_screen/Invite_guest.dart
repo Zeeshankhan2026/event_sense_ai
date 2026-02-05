@@ -2,6 +2,8 @@ import 'package:event_sense_ai/utils/app_assets.dart';
 import 'package:event_sense_ai/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sizer/sizer.dart';
 
@@ -24,8 +26,8 @@ class InviteGuest extends StatelessWidget {
             child: Column(
               children: [
                 // Header Row
-                CustomHeaderBar(title: "Vendors Applications",showBackButton: true,onBack: (){
-                  context.pop();
+                CustomHeaderBar(title: "Invite Guests",showBackButton: true,onBack: (){
+                  Get.back();
                 },),
 
                 Gap(1.h),
@@ -127,7 +129,7 @@ class InviteGuest extends StatelessWidget {
                       ),
                       Positioned.fill(
                         child: Container(
-                          padding: const EdgeInsets.all(16),
+                          padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(16),
                             color: Colors.black.withOpacity(0.4),
@@ -135,7 +137,7 @@ class InviteGuest extends StatelessWidget {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Gap(20.h), // FIXED: replaces Gap(5.h)
+                              Gap(19.h), // FIXED: replaces Gap(5.h)
                               const Text(
                                 "Send RSVP Link",
                                 style: TextStyle(
@@ -304,8 +306,8 @@ class InviteGuest extends StatelessWidget {
                       Gap(2.h),
                       AppButtonWidget(
                         onPressed: (){
-                          context.pushNamed(
-                              AppRoutes.CreateInvitaionCardDesign
+                          Get.toNamed(
+                             AppRoutes.createInvitaionCardDesign
                           );
                         },
                         width: 80.w,

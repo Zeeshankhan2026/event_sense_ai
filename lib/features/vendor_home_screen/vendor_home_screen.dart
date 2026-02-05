@@ -1,78 +1,50 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:event_sense_ai/core/controller/vendor_job_controller.dart';
+import 'package:event_sense_ai/core/models/jobs_model.dart';
+import 'package:event_sense_ai/core/models/vendor_application_model.dart';
 import 'package:event_sense_ai/features/user_home_screen/components/event_card.dart';
+import 'package:event_sense_ai/features/vendor_home_screen/components/new_job_card.dart';
 import 'package:event_sense_ai/utils/app_assets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gap/gap.dart';
-import 'package:go_router/go_router.dart';
+import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
-
+import '../../core/controller/notification_controller.dart';
+import '../../core/controller/vendor_controller.dart';
 import '../../core/routes/app_routes.dart';
-import '../../core/widgets/app_buttons.dart';
 import '../../core/widgets/apptext.dart';
 import '../../utils/app_colors.dart';
 import 'components/active_jobs_widget.dart';
 import 'components/vendor_tiles_widgets.dart';
 
-class VendorHomeScreen extends StatelessWidget {
+class VendorHomeScreen extends StatefulWidget {
   VendorHomeScreen({super.key});
 
-  List<EventCard> eventCardList = [
-    EventCard(
-      imagePath: AppAssets.wedding_reception2,
-      date: "Nov 12 / 6:00 PM",
-      title: "Wedding Receion:n",
-      location: "San Francisco, CA",
-      onTap: () {
-        print("View Details tapped");
-      },
-      peoples_image: "",
-      wallet: '',
-      calender_image: '',
-      location_icon: '',
+  @override
+  State<VendorHomeScreen> createState() => _VendorHomeScreenState();
+}
 
-      attendees: 34,
-      cost: 453,
-      countdown: '23',
-    ),
-    EventCard(
-      imagePath: AppAssets.wedding_reception2,
-      date: "Nov 12 / 6:00 PM",
-      title: "Wedding Receion:n",
-      location: "San Francisco, CA",
-      onTap: () {
-        print("View Details tapped");
-      },
-      peoples_image: '',
-      wallet: '',
-      calender_image: '',
-      location_icon: '',
+class _VendorHomeScreenState extends State<VendorHomeScreen> {
+  final controller = Get.find<VendorController>();
 
-      attendees: 34,
-      cost: 453,
-      countdown: '23',
-    ),
-  ];
+  final jobController = Get.find<VendorJobController>();
 
-  List<ActiveJobReusable> activeJobWidget = [
-    ActiveJobReusable(
-      location: "San Francisco, CA",
-      title: "Miller Wedding",
-      datetime: "Nov 12 / 6:00 PM",
-      ImagePath: AppAssets.activeJob_image,
-    ),
-    ActiveJobReusable(
-      location: "San Francisco, CA",
-      title: "Miller Wedding",
-      datetime: "Nov 12 / 6:00 PM",
-      ImagePath: AppAssets.activeJob_image,
-    ),
-  ];
+  final notificationController = Get.find<NotificationController>();
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    notificationController.listenVendorNotifications();
+    notificationController.initAwesomeNotificationListener();
+  }
+
   @override
   Widget build(BuildContext context) {
     List<VendorTilesWidgets> vendorTile = [
       VendorTilesWidgets(
         onPressed: () {
-          context.pushNamed(AppRoutes.FindNewOppurtunities);
+          Get.toNamed(AppRoutes.findNewOppurtunities);
         },
         title: "Find Job",
         iconData: Icons.search_outlined,
@@ -80,7 +52,7 @@ class VendorHomeScreen extends StatelessWidget {
       ),
       VendorTilesWidgets(
         onPressed: () {
-          context.pushNamed(AppRoutes.VendorMessageScreen);
+          Get.toNamed(AppRoutes.vendorMessageScreen);
         },
         title: "Message",
         iconData: Icons.message_outlined,
@@ -88,13 +60,14 @@ class VendorHomeScreen extends StatelessWidget {
       ),
       VendorTilesWidgets(
         onPressed: () {
-          context.pushNamed(AppRoutes.VendorProfileScreeen);
+          Get.toNamed(AppRoutes.vendorProfileScreeen);
         },
         title: "Profile",
         iconData: Icons.person_outline,
         container_color: Colors.cyan.shade100,
       ),
     ];
+
     return PopScope(
       canPop: false,
       onPopInvoked: (didPop) async {
@@ -137,80 +110,180 @@ class VendorHomeScreen extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         // Profile + Greeting
-                        Row(
-                          children: [
-                            // Profile Image
-                            Container(
-                              width: 48,
-                              height: 48,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(0.1),
-                                    blurRadius: 8,
-                                    offset: const Offset(0, 4),
+                        Obx(() {
+                          final data = controller.vendor.value;
+
+                          // Professional placeholder while loading or if not found
+                          if (data == null) {
+                            return Row(
+                              children: [
+                                Container(
+                                  width: 48,
+                                  height: 48,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: Colors.grey.shade200,
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Container(
+                                      width: 80,
+                                      height: 12,
+                                      decoration: BoxDecoration(
+                                        color: Colors.grey.shade200,
+                                        borderRadius: BorderRadius.circular(4),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 6),
+                                    Container(
+                                      width: 120,
+                                      height: 16,
+                                      decoration: BoxDecoration(
+                                        color: Colors.grey.shade200,
+                                        borderRadius: BorderRadius.circular(4),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            );
+                          }
+
+                          return Row(
+                            children: [
+                              // Profile Image
+                              Container(
+                                width: 48,
+                                height: 48,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Colors.blue.withOpacity(0.1),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.1),
+                                      blurRadius: 8,
+                                      offset: const Offset(0, 4),
+                                    ),
+                                  ],
+                                ),
+                                child: ClipOval(
+                                  child:
+                                      (data.profileImage != null &&
+                                          data.profileImage!.isNotEmpty)
+                                      ? Image.network(
+                                          data.profileImage!,
+                                          fit: BoxFit.cover,
+                                          errorBuilder:
+                                              (context, error, stackTrace) {
+                                                return Center(
+                                                  child: Text(
+                                                    (data.companyName != null &&
+                                                            data
+                                                                .companyName!
+                                                                .isNotEmpty)
+                                                        ? data.companyName![0]
+                                                              .toUpperCase()
+                                                        : "U",
+                                                    style: TextStyle(
+                                                      fontSize: 20,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color:
+                                                          Colors.blue.shade700,
+                                                    ),
+                                                  ),
+                                                );
+                                              },
+                                        )
+                                      : Center(
+                                          child: Text(
+                                            (data.companyName != null &&
+                                                    data
+                                                        .companyName!
+                                                        .isNotEmpty)
+                                                ? data.companyName![0]
+                                                      .toUpperCase()
+                                                : "U",
+                                            style: TextStyle(
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.blue.shade700,
+                                            ),
+                                          ),
+                                        ),
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              // Text
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "Welcome Back",
+                                    style: TextStyle(
+                                      fontSize: 13,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                  Text(
+                                    data.companyName.toString(),
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black87,
+                                    ),
                                   ),
                                 ],
                               ),
-                              child: ClipOval(
-                                child: Image.asset(
-                                  AppAssets
-                                      .vendor_profile, // Replace with actual image
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            // Text
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: const [
-                                Text(
-                                  "Welcome Back",
-                                  style: TextStyle(
-                                    fontSize: 13,
-                                    color: Colors.grey,
-                                  ),
-                                ),
-                                Text(
-                                  "Sarah Jenkins",
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black87,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
+                            ],
+                          );
+                        }),
 
                         // Notification Bell with Dot
                         GestureDetector(
-                          onTap: (){
-                            context.pushNamed(AppRoutes.VendorNotificationScreen);
+                          onTap: () {
+                            Get.toNamed(AppRoutes.vendorNotificationScreen);
                           },
                           child: Stack(
+                            clipBehavior: Clip.none,
                             children: [
-                              const Icon(
-                                Icons.notifications_none,
-                                size: 28,
-                                color: Colors.indigo,
+                              Icon(
+                                Icons.notifications,
+                                size: 30,
+                                color: AppColors.fieldColor,
                               ),
-                              Positioned(
-                                top: -1,
-                                right: 2,
-                                child: Container(
-                                  width: 18,
-                                  height: 20,
-                                  decoration:  BoxDecoration(
-                                    color: Colors.indigo.shade900,
-                                    shape: BoxShape.circle,
+
+                              ///  BADGE
+                              Obx(() {
+                                final count = notificationController.unreadCount;
+
+                                if (count == 0) return const SizedBox.shrink();
+
+                                return Positioned(
+                                  right: -2,
+                                  top: -2,
+                                  child: Container(
+                                    height: 18,
+                                    width: 18,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: Colors.indigo.shade900,
+                                      border: Border.all(color: Colors.white, width: 1.5),
+                                    ),
+                                    child: Center(
+                                      child: AppText(
+                                        count > 9 ? "9+" : count.toString(),
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 10,
+                                      ),
+                                    ),
                                   ),
-                                  child: Center(child: AppText("0",color: Colors.white,), ),
-                                ),
-                              ),
+                                );
+                              }),
                             ],
                           ),
                         ),
@@ -220,7 +293,7 @@ class VendorHomeScreen extends StatelessWidget {
                   // Gap(1.h),
                   Container(
                     width: 100.w,
-                    height: 18.h,
+                    height: 19.h,
                     padding: const EdgeInsets.all(16),
                     margin: const EdgeInsets.symmetric(
                       horizontal: 16,
@@ -321,8 +394,8 @@ class VendorHomeScreen extends StatelessWidget {
                           fontWeight: FontWeight.w600,
                         ),
                         GestureDetector(
-                          onTap: (){
-                            context.pushNamed(AppRoutes.NewRequestDetails);
+                          onTap: () {
+                            Get.toNamed(AppRoutes.findNewOppurtunities);
                           },
                           child: AppText(
                             "See All",
@@ -335,123 +408,69 @@ class VendorHomeScreen extends StatelessWidget {
                     ),
                   ),
                   Gap(1.h),
-                  SizedBox(
-                    height: 45.h,
-                    child: ListView.builder(
-                      itemCount: eventCardList.length,
-                      scrollDirection: Axis.horizontal,
-                      itemBuilder: (context, index) {
-                        final event_card_data = eventCardList[index];
-                        return SizedBox(
-                          width: 80.w,
-                          child: Container(
-                            margin: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 12,
-                            ),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(16),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(0.08),
-                                  blurRadius: 12,
-                                  spreadRadius: 2,
-                                  offset: const Offset(0, 6),
-                                ),
-                              ],
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Stack(
-                                  children: [
-                                    Container(
-                                      width: 80.w,
-                                      height: 25.h,
+                  Obx(() {
+                    final vendor = controller.vendor.value;
 
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(12),
-                                        image: DecorationImage(
-                                          image: AssetImage(
-                                            event_card_data.imagePath,
-                                          ),
-                                          fit: BoxFit.cover,
-                                        ),
-                                      ),
-                                    ),
-                                    Positioned(
-                                      top: 12,
-                                      left: 33.w,
-                                      child: Container(
-                                        padding: EdgeInsets.symmetric(
-                                          horizontal: 12,
-                                          vertical: 3,
-                                        ),
-                                        decoration: BoxDecoration(
-                                          color: Colors.grey.shade200,
-                                          borderRadius: BorderRadius.circular(12),
-                                        ),
-                                        width: 33.w,
-                                        height: 3.h,
-                                        child: AppText(
-                                          event_card_data.date,
-                                          type: AppTextType.caption,color: Colors.black,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                Gap(1.h),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 8.0,
-                                  ),
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      AppText(
-                                        "Wedding Reception",
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w700,
-                                      ),
-                                      Gap(1.h),
-                                      Row(
-                                        children: [
-                                          Icon(Icons.location_on_outlined,color: Colors.indigo.shade700,),
-                                          AppText(
-                                            event_card_data.location,
-                                            fontWeight: FontWeight.w600,
-                                            fontSize: 12,
-                                            color: Colors.indigo.shade700,
-                                          ),
-                                        ],
-                                      ),
-                                      Gap(1.h),
-                                      AppButtonWidget(
-                                        onPressed: () {
-                                          context.pushNamed(
-                                            AppRoutes.NewRequestDetails,
-                                          );
-                                        },
-                                        width: 70.w,
-                                        height: 6.h,
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w600,
-                                        buttonColor: AppColors.fieldColor
-                                            .withOpacity(0.9),
-                                        text: "View Details",
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
+                    // Show loader while vendor data is being fetched
+                    if (vendor == null) {
+                      return const SizedBox(
+                        height: 120,
+                        child: Center(child: CircularProgressIndicator()),
+                      );
+                    }
+
+                    return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+                      stream: jobController.loadJobs(
+                        vendor.serviceCategory?.trim().toLowerCase() ?? "",
+                        vendor.location?.trim().toLowerCase() ?? "",
+                      ),
+                      builder: (context, jobSnap) {
+                        if (jobSnap.connectionState ==
+                            ConnectionState.waiting) {
+                          return const SizedBox(
+                            height: 120,
+                            child: Center(child: CircularProgressIndicator()),
+                          );
+                        }
+
+                        if (!jobSnap.hasData || jobSnap.data!.docs.isEmpty) {
+                          return const SizedBox(
+                            height: 120,
+                            child: Center(child: Text("No new requests")),
+                          );
+                        }
+
+                        final jobs = jobSnap.data!.docs
+                            .map((doc) => VendorJobModel.fromMap(doc.data()))
+                            .toList();
+
+                        return SizedBox(
+                          height: 40.h,
+                          child: ListView.builder(
+                            scrollDirection: Axis.horizontal,
+                            itemCount: jobs.length,
+                            itemBuilder: (context, index) {
+                              final job = jobs[index];
+
+                              return EventJobCard(
+                                imagePath: AppAssets.wedding_reception2,
+                                title: job.title,
+                                location: job.city,
+                                dateTime: job.eventDate,
+                                onViewDetails: () {
+                                  Get.toNamed(
+                                    AppRoutes.submitApplications,
+                                    arguments: job,
+                                  );
+                                },
+                              );
+                            },
                           ),
                         );
                       },
-                    ),
-                  ),
+                    );
+                  }),
+
                   Gap(1.h),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 12.0),
@@ -465,107 +484,38 @@ class VendorHomeScreen extends StatelessWidget {
                   SizedBox(
                     width: 100.w,
                     height: 32.h,
-                    child: ListView.builder(
-                      itemCount: activeJobWidget.length,
-                      itemBuilder: (context, index) {
-                        final active_jobevent = activeJobWidget[index];
-                        return Container(
-                          margin: EdgeInsets.all(8),
-                          padding: EdgeInsets.all(8),
-                          width: 100.w,
-                          height: 14.h,
-                          decoration: BoxDecoration(
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.08),
-                                blurRadius: 12,
-                                spreadRadius: 2,
-                                offset: const Offset(0, 6),
-                              ),
-                            ],
-                            border: BoxBorder.all(color: Colors.grey.shade300),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Row(
-                            children: [
-                              Container(
-                                width: 30.w,
-                                height: 40.h,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(20),
-                                  image: DecorationImage(
-                                    image: AssetImage(AppAssets.activeJob_image),
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                              ),
-                              Gap(2.w),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Gap(1.w),
-                                  AppText(
-                                    active_jobevent.title.toString(),
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 20,
-                                  ),
-                                  Gap(1.w),
-                                  Row(
-                                    children: [
-                                      Icon(
-                                        Icons.calendar_today_outlined,
-                                        size: 22,
-                                      ),
-                                      Gap(1.w),
-                                      AppText(
-                                        active_jobevent.datetime.toString(),
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 10,
-                                        color: Colors.black54,
-                                      ),
-                                    ],
-                                  ),
-                                  Gap(1.w),
-                                  Row(
-                                    children: [
-                                      Icon(Icons.location_on_outlined, size: 22),
-                                      Gap(1.w),
-                                      AppText(
-                                        active_jobevent.location.toString(),
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 10,
-                                        color: Colors.black54,
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                              Spacer(),
-                              GestureDetector(
-                                onTap: () {
-                                  context.pushNamed(AppRoutes.ActiveEvent);
-                                },
-                                child: Container(
-                                  width: 14.w,
-                                  height: 6.h,
+                    child: StreamBuilder(
+                        stream: jobController.fetchAcceptedApplication() ,
+                        builder: (context, snap){
+                          if(snap.connectionState == ConnectionState.waiting){
+                            return Center(child: CircularProgressIndicator(),);
+                          }
+                          if(!snap.hasData || snap.data!.docs.isEmpty){
+                            return Center(child: AppText("Don't have active jobs yet"),);
+                          }
+                          if(snap.hasError){
+                            return Center(child: AppText(snap.hasError.toString()),);
+                          }
+                          final data = snap.data!.docs;
+                          return ListView.builder(
+                            physics: NeverScrollableScrollPhysics(),
+                            itemCount: data.length,
+                            itemBuilder: (context, index) {
+                              final snap_data = data[index];
+                              return ActiveJobCard(
+                                  eventName: snap_data["title"],
+                                  eventDate: snap_data["eventDate"],
+                                  eventLocation: snap_data["city"],
+                                  imageUrl: AppAssets.wedding_reception2,
+                                  onTap: (){
+                                    Get.toNamed(AppRoutes.EventDayProgress,
+                                    arguments: snap_data
+                                    );
 
-                                  decoration: BoxDecoration(
-                                    color: AppColors.first_tile_color.withOpacity(
-                                      0.5,
-                                    ),
-                                    borderRadius: BorderRadius.circular(26),
-                                  ),
-                                  child: Center(
-                                    child: Icon(Icons.arrow_forward_rounded),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        );
-                      },
-                    ),
+                                  });
+                            },
+                          );
+                        })
                   ),
                 ],
               ),

@@ -1,32 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/controller/splash_controller.dart';
 import '../../../core/routes/app_routes.dart';
 import '../../../core/widgets/apptext.dart';
 
-class SplashScreen extends StatefulWidget {
-  const SplashScreen({super.key});
+class SplashScreen extends StatelessWidget {
+   SplashScreen({super.key});
 
-  @override
-  State<SplashScreen> createState() => _SplashScreenState();
-}
+  final SplashController controller = Get.put(SplashController());
 
-class _SplashScreenState extends State<SplashScreen> {
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    Future.delayed(Duration(seconds: 2) ,(){
-      context.goNamed(AppRoutes.login);
-    });
-  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        children: [
-          Center(child: AppText("Splash Screen"),)
-        ],
+      body: Center(
+        child: CircularProgressIndicator(),
       ),
     );
   }

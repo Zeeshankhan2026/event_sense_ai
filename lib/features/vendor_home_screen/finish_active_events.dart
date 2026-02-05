@@ -79,7 +79,7 @@ class FinishActiveEvents extends StatelessWidget {
                     // Back Button
                     AppButtonWidget(
                       onPressed: () {
-                        context.goNamed(AppRoutes.VendorHomeScreen);
+                        context.goNamed(AppRoutes.vendorHomeScreen);
                       },
                       width: 80.w,
                       height: 6.h,

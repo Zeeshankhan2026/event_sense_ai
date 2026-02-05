@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sizer/sizer.dart';
 
@@ -85,7 +87,7 @@ class JoinAsVendorScreen extends StatelessWidget {
                       height: 52,
                       child: ElevatedButton(
                         onPressed: () {
-                          context.pushNamed(AppRoutes.Vendor_profile_screen);
+                          Get.toNamed(AppRoutes.vendorRegistration_screen);
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF1E3A8A),
@@ -112,7 +114,9 @@ class JoinAsVendorScreen extends StatelessWidget {
                       width: double.infinity,
                       height: 52,
                       child: OutlinedButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Get.toNamed(AppRoutes.VendorLoginScreen);
+                        },
                         style: OutlinedButton.styleFrom(
                           backgroundColor: const Color(0xFFF1F1F1),
                           side: BorderSide.none,

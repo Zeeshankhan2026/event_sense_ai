@@ -2,6 +2,8 @@ import 'package:event_sense_ai/core/routes/app_routes.dart';
 import 'package:event_sense_ai/utils/app_assets.dart';
 import 'package:event_sense_ai/utils/app_colors.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sizer/sizer.dart';
 
@@ -162,7 +164,7 @@ class UserReviewScreen extends StatelessWidget {
               // SUBMIT BUTTON
               AppButtonWidget(
                 onPressed: (){
-                  context.goNamed(AppRoutes.VendersManagement);
+                  Get.toNamed(AppRoutes.main);
                 },
                 text: "Submit  Review",
                 width: 80.w,

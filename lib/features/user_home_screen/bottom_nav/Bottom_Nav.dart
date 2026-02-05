@@ -48,7 +48,7 @@ class _BottomNavState extends State<BottomNav> {
         backgroundColor: AppColors.white,
         body: screens[currentIndex],
         bottomNavigationBar: Container(
-          padding: const EdgeInsets.symmetric(vertical: 8),
+          padding: const EdgeInsets.symmetric(vertical: 10),
           decoration: const BoxDecoration(
             color: Colors.transparent,
             // boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 4)],
@@ -74,7 +74,7 @@ class _BottomNavState extends State<BottomNav> {
                 SvgPicture.asset(
                 item.iconPath,
                   width: 35,
-                  height: 35,
+                  height: 30,
                   colorFilter: ColorFilter.mode(
                     isSelected ? AppColors.bottomNavItemColor : Colors.black54,
                     BlendMode.srcIn,

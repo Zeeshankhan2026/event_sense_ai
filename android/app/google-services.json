@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "121087080478",
+    "project_id": "event-ai-c029a",
+    "storage_bucket": "event-ai-c029a.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:121087080478:android:41b59448cfee6fdb8ad60f",
+        "android_client_info": {
+          "package_name": "com.example.event_sense_ai"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "121087080478-jbs0ojst9fu32j8ct84ipjr9opf1u8o3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBbYODZmUkke-BbHeYkKcYonXeE7K3OGDk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "121087080478-jbs0ojst9fu32j8ct84ipjr9opf1u8o3.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "121087080478-9u684n1ce4pqqf1un7m7qajrvet12giq.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.eventSenseAi"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

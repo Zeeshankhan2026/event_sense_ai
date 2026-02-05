@@ -23,31 +23,37 @@ class CustomHeaderBar extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        // crossAxisAlignment: CrossAxisAlignment.,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           if (showBackButton)
-            IconButton(
-              icon: const Icon(Icons.arrow_back_ios, size: 20),
-              onPressed: onBack ?? () => Navigator.pop(context),
+            Padding(
+              padding: const EdgeInsets.only(top: 14.0),
+              child: GestureDetector(
+                onTap: onBack ?? () => Navigator.pop(context),
+                child: Icon(
+                 Icons.arrow_back_ios, size: 20,
+                ),
+              ),
             ),
-          if (!showBackButton) const SizedBox(width: 8),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Gap(1.h),
-                AppText( title,fontSize: 20,
-                  fontWeight: FontWeight.w700,
-                  color: Color(0xff1A2B4C),),
-                if (subtitle != null)
-                  const SizedBox(height: 4),
+          // if (!showBackButton) const SizedBox(width: 8),
+          // Gap(15.w),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Gap(1.h),
+              AppText( title,fontSize: 20,
+                fontWeight: FontWeight.w700,
+                color: Color(0xff1A2B4C),),
+              if (subtitle != null)
+              // const SizedBox(height: 4),
                 if (subtitle != null)
                   AppText( title,fontSize: 14,
-                    fontWeight: FontWeight.w400,
-                    color: Colors.grey),
-              ],
-            ),
+                      fontWeight: FontWeight.w400,
+                      color: Colors.grey),
+            ],
           ),
+          AppText(""),
         ],
       ),
     );

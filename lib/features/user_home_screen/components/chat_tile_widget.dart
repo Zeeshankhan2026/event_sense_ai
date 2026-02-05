@@ -1,6 +1,5 @@
 import 'package:event_sense_ai/features/user_home_screen/message_details_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 
 import '../../../core/widgets/apptext.dart';
 
@@ -27,7 +26,7 @@ class ChatTile extends StatelessWidget {
         Navigator.of(context).push(
           MaterialPageRoute(
             builder: (context) =>
-                MessageDetailsScreen(name: name, user_image: profileImage),
+                MessageDetailsScreen(),
           ),
         );
       },

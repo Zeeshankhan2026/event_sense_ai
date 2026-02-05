@@ -1,37 +1,37 @@
+import 'package:event_sense_ai/core/controller/notification_controller.dart';
+import 'package:event_sense_ai/core/controller/submit_application_controller.dart';
 import 'package:event_sense_ai/utils/app_assets.dart';
 import 'package:event_sense_ai/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sizer/sizer.dart';
-
-import '../../core/routes/app_routes.dart';
 import '../../core/widgets/app_buttons.dart';
 import '../../core/widgets/apptext.dart';
 import '../../core/widgets/custom_headerbar.dart';
 import 'components/review_card.dart';
 
-class ProposalDetails extends StatelessWidget {
-  String? image_url;
-  String? company_name;
-  String? rating;
-  String? review;
-  String? price;
-  ProposalDetails({
-    required this.image_url,
-    required this.company_name,
-    required this.rating,
-    required this.review,
-    required this.price,
-    super.key,
-  });
 
-  List<String> recent_event = [
+class ProposalDetails extends StatefulWidget {
+  ProposalDetails({super.key,});
+
+  @override
+  State<ProposalDetails> createState() => _ProposalDetailsState();
+}
+
+class _ProposalDetailsState extends State<ProposalDetails> {
+  final application = Get.arguments as Map<String,dynamic>;
+
+  final controller = Get.find<SubmitApplicationController>();
+  final notificationController = Get.find<NotificationController>();
+
+  List<String> recentEvent = [
     AppAssets.event_recent_1,
     AppAssets.event_recent_2,
   ];
 
-  List<ReviewCard> review_card_list = [
+  List<ReviewCard> reviewCardList = [
     ReviewCard(
       userName: "Jane Cooper",
       userImage: AppAssets.person_1,
@@ -51,6 +51,7 @@ class ProposalDetails extends StatelessWidget {
           "tempor adipisicing et voluptate duis sit esse aliqua",
     ),
   ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -61,7 +62,7 @@ class ProposalDetails extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                CustomHeaderBar(title: "Vendors Applications",showBackButton: true,onBack: (){
+                CustomHeaderBar(title: "Proposal Details",showBackButton: true,onBack: (){
                   context.pop();
                 },),
                 Gap(2.h),
@@ -85,14 +86,14 @@ class ProposalDetails extends StatelessWidget {
                           ),
                         ),
                         Padding(
-                          padding: const EdgeInsets.all(16),
+                          padding:  EdgeInsets.all(16),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Gap(14.h),
 
                               AppText(
-                                company_name.toString(),
+                                application["vendorName"],
                                 color: Colors.white,
                                 fontSize: 20,
                                 fontWeight: FontWeight.bold,
@@ -108,10 +109,10 @@ class ProposalDetails extends StatelessWidget {
                                   const SizedBox(width: 4),
                                   Row(
                                     children: [
-                                      AppText("$rating", color: Colors.white),
+                                      AppText("4.3", color: Colors.white),
                                       const SizedBox(width: 6),
                                       AppText(
-                                        "$review reviews)",
+                                        "443 reviews)",
                                         fontSize: 12,
                                         color: Colors.white,
                                       ),
@@ -149,7 +150,7 @@ class ProposalDetails extends StatelessWidget {
                 SizedBox(
                   height: 20.h,
                   child: ListView.builder(
-                    itemCount: recent_event.length,
+                    itemCount: recentEvent.length,
                     scrollDirection: Axis.horizontal,
 
                     physics: BouncingScrollPhysics(),
@@ -163,7 +164,7 @@ class ProposalDetails extends StatelessWidget {
                         width: 70.w,
                         decoration: BoxDecoration(
                           image: DecorationImage(
-                            image: AssetImage(recent_event[index]),
+                            image: AssetImage(recentEvent[index]),
                             fit: BoxFit.cover,
                           ),
                           borderRadius: BorderRadius.circular(20),
@@ -176,98 +177,21 @@ class ProposalDetails extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8.0),
                   child: AppText(
-                    "Service Included",
+                    "Descriptions",
                     fontSize: 20,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
                 Gap(1.h),
                 Container(
-                  // padding: EdgeInsets.all(12),
+                  padding: EdgeInsets.all(12),
+                  height: 15.h,
+                  width: 97.w,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(12),
-                    border: BoxBorder.all(color: Colors.grey.shade200),
+                    border: BoxBorder.all(color: Colors.grey.shade400),
                   ),
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Column(
-                          children: [
-                            Row(
-                              children: [
-                                Container(
-                                  width: 40,
-                                  height: 40,
-                                  decoration: BoxDecoration(
-                                    color: Colors.grey.shade200,
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: Icon(Icons.check),
-                                ),
-                                Gap(2.w),
-                                AppText(
-                                  "Full Gourmet Buffet Setup",
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500,
-                                  color: Colors.grey,
-                                ),
-                              ],
-                            ),
-                            Gap(2.h),
-                            Row(
-                              children: [
-                                Container(
-                                  width: 40,
-                                  height: 40,
-                                  decoration: BoxDecoration(
-                                    color: Colors.grey.shade200,
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: Icon(Icons.check),
-                                ),
-                                Gap(2.w),
-                                AppText(
-                                  "3 Professional Waitstaff ( 4 Hours)",
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500,
-                                  color: Colors.grey,
-                                ),
-                              ],
-                            ),
-                            Gap(2.h),
-                            Row(
-                              children: [
-                                Container(
-                                  width: 40,
-                                  height: 40,
-                                  decoration: BoxDecoration(
-                                    color: Colors.grey.shade200,
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: Icon(Icons.check),
-                                ),
-                                Gap(2.w),
-                                AppText(
-                                  "Full Gourmet Buffet Setup",
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500,
-                                  color: Colors.grey,
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                      Divider(color: Colors.grey.shade200),
-                      AppText(
-                        "View Full Proposal PDF",
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                      ),
-                      Gap(1.h),
-                    ],
-                  ),
+                  child: AppText(application["proposalMessage"])
                 ),
                 Gap(2.h),
                 AppText(
@@ -308,77 +232,19 @@ class ProposalDetails extends StatelessWidget {
                             Row(
                               children: [
                                 AppText(
-                                  "\$4,500",
+                                  application["quotedPrice"].toString(),
                                   fontSize: 24,
                                   fontWeight: FontWeight.w600,
                                 ),
                                 Gap(2.w),
                                 AppText(
-                                  "for 150 Guests",
+                                  application["guest"],
                                   fontSize: 12,
                                   fontWeight: FontWeight.w400,
                                   color: Colors.grey.shade900,
                                 ),
                               ],
                             ),
-                          ],
-                        ),
-                      ),
-                      Container(
-                        padding: EdgeInsets.all(20),
-                        child: Column(
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                AppText(
-                                  "Food & Beverage",
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500,
-                                  color: Colors.grey,
-                                ),
-                                AppText(
-                                  "\$30,00",
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ],
-                            ),
-                            Gap(1.h),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                AppText(
-                                  "Service Staff",
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500,
-                                  color: Colors.grey,
-                                ),
-                                AppText(
-                                  "\$10,00",
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ],
-                            ),
-                            Gap(1.h),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                AppText(
-                                  "Rental and Equipment",
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500,
-                                  color: Colors.grey,
-                                ),
-                                AppText(
-                                  "\$5,00",
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ],
-                            ),
-                            Gap(1.h),
                           ],
                         ),
                       ),
@@ -409,9 +275,9 @@ class ProposalDetails extends StatelessWidget {
                   child: ListView.builder(
                     shrinkWrap: true,
                     physics: NeverScrollableScrollPhysics(),
-                    itemCount: review_card_list.length,
+                    itemCount: reviewCardList.length,
                       itemBuilder: (context, index) {
-                      final data = review_card_list[index];
+                      final data = reviewCardList[index];
                     return ReviewCard(
                         userName: data.userImage,
                         userImage: data.userImage,
@@ -424,19 +290,69 @@ class ProposalDetails extends StatelessWidget {
                 Row(
                   children: [
                     AppButtonWidget(
-                      buttonColor: Colors.deepOrangeAccent.shade100,
-                        width: 30.w,
-                        height: 6.h,
-                        text: "Reject", fontSize: 16,fontWeight: FontWeight.w600,),
-                    Gap(2.w),
-                    AppButtonWidget(
-                      onPressed: (){
-                        context.pushNamed(AppRoutes.ProposalAprovalScreen);
+                      onPressed: application["status"] == "rejected" || application["status"] == "accepted" ? null : () async {
+                        setState(() {
+                          application["status"] = "rejected";
+                        });
+                        await controller.rejectApplication(application["applicationId"], "rejected");
+                        await    notificationController.createApplicationStatusNotification(
+                            vendorId: application["vendorId"],
+                            plannerId: application["plannerId"] ?? "",
+                            eventName: application["eventName"],
+                            eventImage: application["eventImage"],
+                            eventDate: application["eventDate"],
+                            eventLocation: application["eventLocation"],
+                            applicationId: application["applicationId"],
+                            eventId: application["eventId"] ?? "",
+                            categoryId: application["categoryId"] ?? "",
+                            isAccepted: false);
                       },
+                      buttonColor: application["status"] == "rejected" ? Colors.grey : Colors.deepOrangeAccent.shade100,
+                      width: 30.w,
+                      height: 6.h,
+                      text: application["status"] == "rejected" ? "Rejected" : "Reject",
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
+                    Gap(2.w),
+                    Obx(() {
+                      return AppButtonWidget(
+                        onPressed: application["status"] == "accepted" || application["status"] == "rejected" ? null : () async {
+                          setState(() {
+                            application["status"] = "accepted";
+                          });
+                          await controller.AcceptApplication(
+                            vendorId: application["vendorId"],
+                            applicationId: application["applicationId"],
+                            status: "accepted",
+                            plannerId: application["plannerId"] ?? "",
+                            eventId: application["eventId"] ?? "",
+                            categoryId: application["categoryId"] ?? "",
+                            jobId: application["jobId"] ?? "",
+                          );
+                          /////notification will triggered here ////////////////
+
+                       await    notificationController.createApplicationStatusNotification(
+                              vendorId: application["vendorId"],
+                              plannerId: application["plannerId"] ?? "",
+                              eventName: application["eventName"],
+                              eventImage: application["eventImage"],
+                              eventDate: application["eventDate"],
+                              eventLocation: application["eventLocation"],
+                              applicationId: application["applicationId"],
+                              eventId: application["eventId"] ?? "",
+                              categoryId: application["categoryId"] ?? "",
+                              isAccepted: true);
+                        },
                         buttonColor: Colors.indigo.shade600,
+                        loader: controller.isLoading.value,
                         width: 60.w,
                         height: 6.h,
-                        text: "Accept  Proposal" ,fontSize: 16,fontWeight: FontWeight.w600,),
+                        text: application["status"] == "accepted" ? "Accepted" : "Accept Proposal",
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      );
+                    }),
                   ],
                 )
               ],

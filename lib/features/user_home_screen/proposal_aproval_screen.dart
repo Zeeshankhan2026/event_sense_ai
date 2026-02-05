@@ -1,5 +1,7 @@
 import 'package:event_sense_ai/utils/app_assets.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sizer/sizer.dart';
 
@@ -8,7 +10,8 @@ import '../../core/widgets/apptext.dart';
 import '../../core/widgets/custom_headerbar.dart';
 
 class ProposalApprovalScreen extends StatelessWidget {
-  const ProposalApprovalScreen({super.key});
+   ProposalApprovalScreen({super.key});
+  final application = Get.arguments as Map<String,dynamic>;
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +25,7 @@ class ProposalApprovalScreen extends StatelessWidget {
             children: [
 
               CustomHeaderBar(title: "Vendors Applications",showBackButton: true,onBack: (){
-                context.pop();
+                Navigator.of(context).pop();
               },),
               const SizedBox(height: 24),
 
@@ -38,15 +41,15 @@ class ProposalApprovalScreen extends StatelessWidget {
                   const SizedBox(width: 12),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: const [
-                      AppText("Catering and Dalish", fontSize: 16,
+                    children:  [
+                      AppText(application["category"], fontSize: 16,
                         fontWeight: FontWeight.w600,),
                       SizedBox(height: 4),
                       Row(
                         children: [
                           Icon(Icons.location_on_outlined, size: 14, color: Colors.grey),
                           SizedBox(width: 4),
-                          AppText("San Francisco", fontSize: 13, color: Colors.grey)
+                          AppText(application["eventLocation"], fontSize: 13, color: Colors.grey)
                         ],
                       ),
                     ],
@@ -78,11 +81,11 @@ class ProposalApprovalScreen extends StatelessWidget {
                       children: [
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
-                          children: const [
+                          children:  [
                            AppText("Total Due",   fontSize: 13,
                              color: Colors.grey,),
                             SizedBox(height: 4),
-                            AppText("\$ 4,500",  fontSize: 22,
+                            AppText(application["categoryBudget"].toString(),  fontSize: 22,
                                 fontWeight: FontWeight.bold,
                                 color: Color(0xFF1D2A5B)),
                             SizedBox(height: 4),
@@ -154,8 +157,8 @@ class ProposalApprovalScreen extends StatelessWidget {
                       style: TextStyle(fontSize: 13, color: Colors.grey),
                     ),
                     const SizedBox(height: 4),
-                    const Text(
-                      "Dec 30, 2025",
+                     Text(
+                      application["eventStartDate"],
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
@@ -179,7 +182,7 @@ class ProposalApprovalScreen extends StatelessWidget {
                     ),
                   ),
                   onPressed: () {
-                    context.pushNamed(AppRoutes.UserReviewScreen);
+                    Get.toNamed(AppRoutes.userReviewScreen);
                   },
                   child: const AppText("Approved Order",fontSize: 16,fontWeight: FontWeight.w600,color: Colors.white,)
                 ),

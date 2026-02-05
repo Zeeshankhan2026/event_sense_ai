@@ -1,7 +1,10 @@
+import 'package:event_sense_ai/core/widgets/custom_headerbar.dart';
 import 'package:event_sense_ai/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sizer/sizer.dart';
 
@@ -45,21 +48,9 @@ class _CheckBudgetState extends State<CheckBudget> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                children: [
-                  IconButton(
-                    onPressed: () {
-                      context.pop();
-                    },
-                    icon: Icon(Icons.arrow_back_ios),
-                  ),
-                  AppText(
-                    "Budget Setup",
-                    fontWeight: FontWeight.w600,
-                    fontSize: 20,
-                  ),
-                ],
-              ),
+              CustomHeaderBar(title: "Budget Setup", showBackButton: true,onBack: (){
+                Get.back();
+              },),
               AppText(
                 "Let's Plan your Finances",
                 fontWeight: FontWeight.w700,
@@ -220,7 +211,7 @@ class _CheckBudgetState extends State<CheckBudget> {
 
               AppButtonWidget(
                 onPressed: () {
-                  context.pushNamed(AppRoutes.BudgetBreakdown);
+                  Get.toNamed(AppRoutes.budgetBreakdown);
                 },
                 width: 100.w,
                 height: 6.h,

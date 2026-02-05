@@ -55,14 +55,14 @@ class ForgetPasswordScreen extends StatelessWidget {
               children: [
                 ClipRRect(
             borderRadius : BorderRadius.circular(12),
-                  child: Image.asset(AppAssets.forget_password),
+                  child: Image.asset(AppAssets.forget_password,fit: BoxFit.cover,),
                 ),
                 SizedBox(height: 20,),
                 AppFormField(
-
-                    borderColor: Colors.black,
-                    focusedBorderColor: Colors.black,
-                    showBorder: false,
+                  prefic_icons: Icons.email_outlined,
+                    borderColor: Colors.grey.shade300,
+                    focusedBorderColor: Colors.grey.shade300,
+                    showBorder: true,
                     title: "email@gmail.com",
                     textEditingController: email_controller),
                 SizedBox(height: 30,),

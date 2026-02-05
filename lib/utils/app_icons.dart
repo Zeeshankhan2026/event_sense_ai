@@ -34,4 +34,7 @@ class AppIcons {
   static final guest_list_icon = "assets/icons/guest_listt.svg";
   static final invitaion_icon = "assets/icons/invitation_icons.svg";
   static final budget_allocation = "assets/icons/budget_allocation_icon.svg";
+  static final light_icon = "assets/icons/light_icon.svg";
+  static final welcome_baner = "assets/icons/welcome_banner.svg";
+  static final forget_password = "assets/icons/welcome_banner.svg";
 }

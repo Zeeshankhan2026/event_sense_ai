@@ -5,20 +5,40 @@ import 'package:gap/gap.dart';
 import '../../../core/widgets/apptext.dart';
 
 class AiGenerateCards extends StatelessWidget {
-  String icons;
-  String title;
-  String tag;
-  Color bg_color;
-  Color container_color;
+  final String icons;
+  final String title;
+  final String tag;
+  final Color bg_color;
+  final Color container_color;
   final VoidCallback voidCallback;
-   AiGenerateCards({
-     required this.icons,
-     required this.title,
-     required this.tag,
-     required this.bg_color,
-     required this.voidCallback,
-     required this.container_color,
-     super.key});
+
+  const AiGenerateCards({
+    required this.icons,
+    required this.title,
+    required this.tag,
+    required this.bg_color,
+    required this.voidCallback,
+    required this.container_color,
+    super.key,
+  });
+
+  AiGenerateCards copyWith({
+    String? icons,
+    String? title,
+    String? tag,
+    Color? bg_color,
+    Color? container_color,
+    VoidCallback? voidCallback,
+  }) {
+    return AiGenerateCards(
+      icons: icons ?? this.icons,
+      title: title ?? this.title,
+      tag: tag ?? this.tag,
+      bg_color: bg_color ?? this.bg_color,
+      container_color: container_color ?? this.container_color,
+      voidCallback: voidCallback ?? this.voidCallback,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {

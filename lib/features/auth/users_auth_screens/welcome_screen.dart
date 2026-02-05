@@ -1,3 +1,4 @@
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:event_sense_ai/utils/app_assets.dart';
 import 'package:event_sense_ai/utils/app_colors.dart';
 import 'package:event_sense_ai/utils/app_icons.dart';
@@ -5,11 +6,14 @@ import 'package:event_sense_ai/utils/app_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/routes/app_routes.dart';
 import '../../../core/widgets/app_buttons.dart';
 import '../../../core/widgets/snackbar_widget.dart';
+import '../vendor_auth_screen/vendor_welcome_screen.dart';
 
 class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({super.key});
@@ -22,20 +26,33 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   String? selectedCard; // "personal" or "professional"
 
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _initNotifications();
+
+  }
+
+  void _initNotifications() async {
+    final isAllowed =
+    await AwesomeNotifications().isNotificationAllowed();
+
+    if (!isAllowed) {
+      await AwesomeNotifications()
+          .requestPermissionToSendNotifications();
+    }
+  }
+  @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
     final height = MediaQuery.of(context).size.height;
-
     return Scaffold(
       body: Column(
         children: [
           SizedBox(
             width: width,
             height: height * 0.2,
-            child: Image.asset(
-              AppAssets.banner_welcome_screen,
-              fit: BoxFit.cover,
-            ),
+            child: SvgPicture.asset(AppIcons.welcome_baner,fit: BoxFit.cover,)
           ),
           const SizedBox(height: 10),
           Column(
@@ -90,7 +107,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                                   const SizedBox(width: 8),
                                   AppText(
                                     "For Individuals",
-                                    type: AppTextType.bodyBold,
+                                    type: AppTextType.heading1Normal,
                                     fontSize: 18,
                                   ),
                                 ],
@@ -163,7 +180,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                                   const SizedBox(width: 8),
                                   AppText(
                                     "For Business",
-                                    type: AppTextType.bodyBold,
+                                    type: AppTextType.heading1Normal,
                                     fontSize: 18,
                                   ),
                                 ],
@@ -173,6 +190,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                                 "Professional Planner",
                                 type: AppTextType.heading1,
                                 fontSize: 18,
+
                               ),
                               const Gap(4),
                               AppText(
@@ -205,9 +223,9 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
               AppButtonWidget(
                 onPressed: () {
                   if (selectedCard == "personal") {
-                    context.pushNamed(AppRoutes.login);
+                    Get.toNamed(AppRoutes.login);
                   } else if (selectedCard == "professional") {
-                    context.pushNamed(AppRoutes.JoinAsVendorScreen);
+                    Get.toNamed(AppRoutes.joinAsVendorScreen);
                   } else {
                     AppSnackbar.show(
                       context,

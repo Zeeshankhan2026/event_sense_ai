@@ -1,5 +1,7 @@
 import 'package:event_sense_ai/utils/app_assets.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/routes/app_routes.dart';
@@ -46,12 +48,12 @@ class UserSetLocation extends StatelessWidget {
                     AppText(  "Where are you now?",fontSize: 18,fontWeight: FontWeight.bold,),
                     const SizedBox(height: 12),
                     AppText(textAlign: TextAlign.center,
-                      "Set your location so we can find you at the right spot and get restaurants around you.",
-                      fontSize: 14,color: Colors.black54,)
+                      "Set your location so we can find you at the right spot and get services around you.",
+                      fontSize: 12,color: Colors.black54,fontWeight: FontWeight.bold,)
                     ,  const SizedBox(height: 20),
                     ElevatedButton(
                         onPressed: () {
-                          context.pushNamed(AppRoutes.UserConfirmLocation);
+                          Get.toNamed(AppRoutes.userConfirmLocation);
                           // Add location picker logic here
                         },
                         style: ElevatedButton.styleFrom(

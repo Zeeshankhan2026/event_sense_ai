@@ -56,63 +56,79 @@ class EventScreenCard extends StatelessWidget {
               /// IMAGE
               ClipRRect(
                 borderRadius: BorderRadius.circular(12),
-                child: Image.network(
-                  imageUrl,
-                  height: 72,
-                  width: 72,
-                  fit: BoxFit.cover,
-                ),
+                child: imageUrl.startsWith('http') 
+                  ? Image.network(
+                      imageUrl,
+                      height: 72,
+                      width: 72,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) => Image.asset(
+                        imageUrl, // If network fails, try as asset (though unlikely to be same path)
+                        height: 72,
+                        width: 72,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) => const Icon(Icons.image, size: 72),
+                      ),
+                    )
+                  : Image.asset(
+                      imageUrl,
+                      height: 72,
+                      width: 72,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) => const Icon(Icons.image, size: 72),
+                    ),
               ),
               const SizedBox(width: 12),
 
               /// TEXT + BADGE
               Expanded(
-                child: Stack(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Column(
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          title,
-                          style: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
+                        Expanded(
+                          child: Text(
+                            title,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
                         ),
-                        const SizedBox(height: 4),
-                        Text(
-                          description,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                            fontSize: 11,
-                            color: Colors.grey,
+                        const SizedBox(width: 8),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 4,
+                          ),
+                          decoration: BoxDecoration(
+                            color: const Color(0xffE8EDFF),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Text(
+                            daysLeft,
+                            style: const TextStyle(
+                              fontSize: 10,
+                              fontWeight: FontWeight.w600,
+                              color: Color(0xff4C63FF),
+                            ),
                           ),
                         ),
                       ],
                     ),
-
-                    /// BADGE
-                    Positioned(
-                      top: 0,
-                      right: 0,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 4,
-                        ),
-                        decoration: BoxDecoration(
-                          color: const Color(0xffE8EDFF),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Text(
-                          daysLeft,
-                          style: const TextStyle(
-                            fontSize: 10,
-                            fontWeight: FontWeight.w600,
-                            color: Color(0xff4C63FF),
-                          ),
-                        ),
+                    const SizedBox(height: 4),
+                    Text(
+                      description,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontSize: 11,
+                        color: Colors.grey,
                       ),
                     ),
                   ],
@@ -130,18 +146,17 @@ class EventScreenCard extends StatelessWidget {
           /// BOTTOM ROW
           Row(
             children: [
-              _infoItem(Icons.group, people),
-              const SizedBox(width: 12),
+              _infoItem(Icons.group, "people"),
+              const SizedBox(width: 8),
               _infoItem(
                 Icons.attach_money,
                 price,
                 color: Colors.green,
               ),
-              const SizedBox(width: 12),
-              _infoItem(Icons.calendar_today, date),
-              const SizedBox(width: 12),
-              _statusItem(location),
-              const Spacer(),
+              const SizedBox(width: 8),
+              Expanded(child: _infoItem(Icons.calendar_today, date)),
+              const SizedBox(width: 8),
+              Expanded(child: _statusItem(location)),
               const Icon(
                 Icons.arrow_forward_ios,
                 size: 14,
@@ -158,15 +173,20 @@ class EventScreenCard extends StatelessWidget {
   Widget _infoItem(IconData icon, String text,
       {Color color = Colors.black}) {
     return Row(
+      mainAxisSize: MainAxisSize.min,
       children: [
         Icon(icon, size: 14, color: color),
         const SizedBox(width: 4),
-        Text(
-          text,
-          style: TextStyle(
-            fontSize: 11,
-            color: color,
-            fontWeight: FontWeight.w500,
+        Flexible(
+          child: Text(
+            text,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              fontSize: 11,
+              color: color,
+              fontWeight: FontWeight.w500,
+            ),
           ),
         ),
       ],
@@ -176,15 +196,20 @@ class EventScreenCard extends StatelessWidget {
   /// STATUS ITEM
   Widget _statusItem(String text) {
     return Row(
+      mainAxisSize: MainAxisSize.min,
       children: [
         const Icon(Icons.location_on, size: 14, color: Colors.green),
         const SizedBox(width: 4),
-        Text(
-          text,
-          style: const TextStyle(
-            fontSize: 11,
-            color: Colors.green,
-            fontWeight: FontWeight.w500,
+        Flexible(
+          child: Text(
+            text,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(
+              fontSize: 11,
+              color: Colors.green,
+              fontWeight: FontWeight.w500,
+            ),
           ),
         ),
       ],

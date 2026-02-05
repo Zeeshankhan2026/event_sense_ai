@@ -25,7 +25,9 @@ class VendorTilesWidgets extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       splashColor: Colors.white,
-      onTap: onPressed,
+      onTap: (){
+        onPressed();
+      },
       child: Container(
         margin: EdgeInsets.all(8),
         width: 28.w,

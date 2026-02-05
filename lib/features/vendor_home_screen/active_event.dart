@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sizer/sizer.dart';
 
@@ -32,7 +34,7 @@ class _ActiveEventState extends State<ActiveEvent> {
           child: Column(
             children: [
               CustomHeaderBar(title: "Event Day Progress",showBackButton: true,onBack: (){
-                context.pop();
+                Navigator.of(context).pop();
               },),
               Gap(2.h),
         Container(
@@ -206,7 +208,7 @@ class _ActiveEventState extends State<ActiveEvent> {
                   ),
                   AppButtonWidget(
                     onPressed: () {
-                     context.pushNamed(AppRoutes.FinishActiveEvents);
+                     context.pushNamed(AppRoutes.finishActiveEvents);
                     },
                     width: 65.w,
                     height: 6.h,

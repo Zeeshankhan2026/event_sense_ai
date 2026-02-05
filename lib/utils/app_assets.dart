@@ -1,5 +1,5 @@
 class AppAssets {
-   static final banner_welcome_screen = "assets/images/Group1.png";
+   static final banner_welcome_screen = "assets/images/welcome_screeen_banner.png";
   static final wellcome_screen_image1 = "assets/images/wellcome_screen_image1.png";
   static final wellcome_screen_image2 = "assets/images/wellcome_screen_image2.png";
   static final login_screen_banner = "assets/images/login_screen_banner.png";

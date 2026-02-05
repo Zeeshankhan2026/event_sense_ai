@@ -1,15 +1,18 @@
+import 'package:event_sense_ai/core/controller/guest_controller.dart';
 import 'package:event_sense_ai/utils/app_colors.dart';
 import 'package:event_sense_ai/utils/app_icons.dart';
+import 'package:event_sense_ai/utils/app_validator.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
-import 'package:go_router/go_router.dart';
+import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
-
 import '../../core/widgets/app_buttons.dart';
 import '../../core/widgets/app_textfield.dart';
 import '../../core/widgets/apptext.dart';
 import '../../core/widgets/custom_headerbar.dart';
+
 
 class AddGuest extends StatefulWidget {
    AddGuest({super.key});
@@ -19,14 +22,11 @@ class AddGuest extends StatefulWidget {
 }
 
 class _AddGuestState extends State<AddGuest> {
-  final guest_name_controller = TextEditingController();
 
-  final guest_email_controller = TextEditingController();
 
-  final guest_phone_controller = TextEditingController();
+  final eventId = Get.arguments;
 
-   String selectedCategory = "Family";
-
+   final controller = Get.find<GuestController>();
    final List<String> categories = [
      "Family",
      "Friends",
@@ -34,6 +34,59 @@ class _AddGuestState extends State<AddGuest> {
      "Relative",
    ];
  bool isGuestPartner = false;
+ final formKey  = GlobalKey<FormState>();
+
+  Future<Map<String, String>?> pickContactFromPhone(BuildContext context) async {
+    try {
+      final permissionGranted = await FlutterContacts.requestPermission();
+      if (!permissionGranted) return null;
+
+      final contacts = await FlutterContacts.getContacts(
+        withProperties: true,
+        withPhoto: false,
+        withAccounts: true,
+        sorted: true,
+      );
+
+      if (contacts.isEmpty) {
+        debugPrint("No contacts found");
+        return null;
+      }
+
+      return await showModalBottomSheet<Map<String, String>>(
+        context: context,
+        builder: (_) {
+          return ListView(
+            children: contacts
+                .where((c) => c.phones.isNotEmpty)
+                .map((c) => ListTile(
+              leading: CircleAvatar(
+                child: Text(
+                  c.displayName.isNotEmpty
+                      ? c.displayName[0].toUpperCase()
+                      : "?",
+                ),
+              ),
+              title: Text(c.displayName),
+              subtitle: Text(c.phones.first.number),
+              onTap: () {
+                Navigator.pop(context, {
+                  "name": c.displayName,
+                  "phone": c.phones.first.number,
+                });
+              },
+            ))
+                .toList(),
+          );
+        },
+      );
+    } catch (e) {
+      debugPrint("Contact picker error: $e");
+      return null;
+    }
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -44,8 +97,8 @@ class _AddGuestState extends State<AddGuest> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                CustomHeaderBar(title: "Vendors Applications",showBackButton: true,onBack: (){
-                  context.pop();
+                CustomHeaderBar(title: "Add Guest",showBackButton: true,onBack: (){
+                  Get.back();
                 },),
                 Gap(1.w),
                 Container(
@@ -81,36 +134,44 @@ class _AddGuestState extends State<AddGuest> {
                     ],
                   ),
                 ),
-                Align( alignment: Alignment.centerLeft, child: AppText("Name", type: AppTextType.bodyBold, fontSize: 16,color: AppColors.textGrey,), ),
-                AppFormField(
-                    prefic_icons: Icons.email,
-                    borderColor: Colors.black,
-                    focusedBorderColor: Colors.black,
-                    showBorder: false,
-                    title: "Add Name",
-                    textEditingController: guest_name_controller),
-                Gap(1.h),
-                Align( alignment: Alignment.centerLeft, child: AppText("Email", type: AppTextType.bodyBold, fontSize: 16,color: AppColors.textGrey,), ),
-                AppFormField(
-                    prefic_icons: Icons.email,
-                    borderColor: Colors.black,
-                    focusedBorderColor: Colors.black,
-                    showBorder: false,
-                    title: "Loisbecket@gmail.com",
-                    textEditingController: guest_name_controller),
-                Gap(1.h),
-                Align( alignment: Alignment.centerLeft, child: AppText("Phone", type: AppTextType.bodyBold, fontSize: 16,color: AppColors.textGrey,), ),
-          
-                AppFormField(
-                    prefic_icons: Icons.email,
-                    borderColor: Colors.black,
-                    focusedBorderColor: Colors.black,
-                    showBorder: false,
-                    title: "123-456-789",
-                    textEditingController: guest_name_controller),
-                Gap(2.h),
-                AppText("Guest Category", type: AppTextType.captionDark,fontWeight: FontWeight.bold,),
-                Gap(1.h),
+              Form(
+                key: formKey,
+                  child: Column(
+                    children: [
+                      Align( alignment: Alignment.centerLeft, child: AppText("Name", type: AppTextType.bodyBold, fontSize: 16,color: AppColors.textGrey,), ),
+                      AppFormField(
+                          prefic_icons: Icons.person_outline,
+                          borderColor: Colors.grey.shade300,
+                          focusedBorderColor: Colors.grey.shade300,
+                          showBorder: true,
+                          title: "Add Name",
+                          textEditingController: controller.guestName),
+                      Gap(1.h),
+                      Align( alignment: Alignment.centerLeft, child: AppText("Email", type: AppTextType.bodyBold, fontSize: 16,color: AppColors.textGrey,), ),
+                      AppFormField(
+                          prefic_icons: Icons.email_outlined,
+                          borderColor: Colors.grey.shade300,
+                          focusedBorderColor: Colors.grey.shade300,
+                          showBorder: true,
+                          title: "Loisbecket@gmail.com",
+                          textEditingController: controller.guestEmail),
+                      Gap(1.h),
+                      Align( alignment: Alignment.centerLeft, child: AppText("Phone", type: AppTextType.bodyBold, fontSize: 16,color: AppColors.textGrey,), ),
+
+                      AppFormField(
+                          prefic_icons: Icons.phone_android,
+                          borderColor: Colors.grey.shade300,
+                          focusedBorderColor: Colors.grey.shade300,
+                          showBorder: true,
+                          title: "123-456-789",
+                          textEditingController: controller.guestPhone),
+                      Gap(2.h),
+                      Align(
+                        alignment: Alignment.centerLeft,
+                          child: AppText("Guest Category", type: AppTextType.captionDark,fontWeight: FontWeight.bold,)),
+                      Gap(1.h),
+                    ],
+                  )),
                 GestureDetector(
                   onTap: (){
                     print("working");
@@ -124,24 +185,20 @@ class _AddGuestState extends State<AddGuest> {
                     child: PopupMenuButton<String>(
                       onSelected: (value) {
                         setState(() {
-                          selectedCategory = value;
+                          controller.guestCategory.value = value;
                         });
                       },
                       itemBuilder: (context) {
                         return categories
-                            .map(
-                              (category) => PopupMenuItem<String>(
+                            .map((category) => PopupMenuItem<String>(
                             value: category,
-                            child: Text(category),
-                          ),
-                        )
-                            .toList();
+                            child: Text(category),),).toList();
                       },
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           AppText(
-                            selectedCategory,
+                            controller.guestCategory.value,
                             type: AppTextType.captionDark,
                             fontWeight: FontWeight.bold,
                           ),
@@ -164,20 +221,19 @@ class _AddGuestState extends State<AddGuest> {
                   child:  Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        AppText(
+                        const AppText(
                           "Guest can bring partner",
                           type: AppTextType.captionDark,
                           fontWeight: FontWeight.bold,
                         ),
                         const SizedBox(width: 4),
-                         Switch(
+                         Obx(() => Switch(
                            inactiveTrackColor: Colors.grey.shade300,
                              activeTrackColor: Colors.grey,
-                             value: isGuestPartner, onChanged: (value){
-                           setState(() {
-                             isGuestPartner = !isGuestPartner;
-                           });
-                         }),
+                             value: controller.bringPartner.value,
+                             onChanged: (value){
+                               controller.bringPartner.value = value;
+                         })),
                       ],
                     ),
                   ),
@@ -191,56 +247,57 @@ class _AddGuestState extends State<AddGuest> {
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     // App-based Contacts
-                    Container(
-                      width: 140,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFE3F2FD), // light blue
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Column(
-                        children: [
-                          Icon(Icons.contact_page, size: 32, color: Colors.blue),
-                          const SizedBox(height: 8),
-                          AppText(   "Contacts", fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.blue,)
-                        ],
-                      ),
-                    ),
-          
-                    const SizedBox(width: 16),
-          
-                    // CSV Contacts
-                    Container(
-                      width: 140,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFE8F5E9), // light green
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Column(
-                        children: [
-                          Icon(Icons.email_rounded, size: 32, color: Colors.green),
-                          const SizedBox(height: 8),
-                         AppText("Email", fontSize: 14,
-                           fontWeight: FontWeight.w600,
-                           color: Colors.green,)
-                        ],
+                    InkWell(
+                      onTap: () async {
+                        final data = await pickContactFromPhone(context);
+
+                        if (data != null) {
+                          controller.guestName.text = data["name"]!;
+                          controller.guestPhone.text = data["phone"]!;
+                        }
+                      },
+                      child: Container(
+                        width: 90.w,
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFE3F2FD), // light blue
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Column(
+                          children: [
+                            Icon(Icons.contact_page, size: 32, color: Colors.blue),
+                            const SizedBox(height: 8),
+                            AppText(   "Contacts", fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.blue,)
+                          ],
+                        ),
                       ),
                     ),
+
+
                   ],
                 ),
                 Gap(3.h),
-                AppButtonWidget(
-                  onPressed: (){
-          
-                  },
-                  prefixIcon: Icon(Icons.add,color: Colors.white,),
-                  width: 120.w,
-                  height: 7.h,
-                  buttonColor: AppColors.fieldColor,
-                  text: "Add Guest",fontWeight: FontWeight.w500,fontSize: 14,),
+                Obx((){
+                  return AppButtonWidget(
+                    onPressed: controller.isLoading.value ? null :  () async {
+                      if(formKey.currentState!.validate()){
+                        print("working");
+                        await controller.AddGuest().then((value) {
+
+                        });
+                      }
+
+                    },
+                    prefixIcon: Icon(Icons.add,color: Colors.white,),
+                    width: 120.w,
+                    height: 7.h,
+                    loader: controller.isLoading.value,
+                    buttonColor: AppColors.fieldColor,
+                    text: "Add Guest",fontWeight: FontWeight.w500,fontSize: 14,);
+                }
+                ),
           Gap(1.h),
               ],
             ),

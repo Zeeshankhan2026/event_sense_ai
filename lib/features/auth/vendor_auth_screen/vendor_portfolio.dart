@@ -2,6 +2,8 @@ import 'package:dotted_border/dotted_border.dart';
 import 'package:event_sense_ai/utils/app_assets.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sizer/sizer.dart';
 
@@ -245,7 +247,7 @@ class vendorPortfolio extends StatelessWidget {
               Gap(1.h),
               AppButtonWidget(
                 onPressed: (){
-                  context.goNamed(AppRoutes.VendorHomeScreen);
+                  Get.toNamed(AppRoutes.vendorHomeScreen);
                 },
                 width: 100.w,
                 height: 7.h,

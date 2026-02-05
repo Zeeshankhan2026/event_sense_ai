@@ -1,20 +1,22 @@
 import 'dart:ui';
+import 'package:event_sense_ai/utils/app_assets.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 
+import '../../core/controller/planner_chat_controller.dart';
 import '../../core/widgets/apptext.dart';
 
 class MessageDetailsScreen extends StatelessWidget {
-  final String name;
-  final String user_image;
+  MessageDetailsScreen(
+      {super.key,});
 
-  MessageDetailsScreen({
-    required this.name,
-    required this.user_image,
-    super.key,
-  });
+  final messageTextController = TextEditingController();
+  final application = Get.arguments as Map<String ,dynamic>;
+  final controller = Get.find<PlannerChatController>();
 
-  final messageController = TextEditingController();
+  final active_eventdata = Get.arguments as Map<String,dynamic>;
 
   @override
   Widget build(BuildContext context) {
@@ -60,7 +62,7 @@ class MessageDetailsScreen extends StatelessWidget {
                           children: [
                             CircleAvatar(
                               radius: 20,
-                              backgroundImage: AssetImage(user_image),
+                              backgroundImage: AssetImage(AppAssets.person_1),
                             ),
                             Positioned(
                               bottom: 0,
@@ -86,7 +88,7 @@ class MessageDetailsScreen extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             AppText(
-                              name,
+                             application["vendorName"],
                               fontSize: 17,
                               fontWeight: FontWeight.w700,
                               color: Colors.black87,
@@ -105,8 +107,52 @@ class MessageDetailsScreen extends StatelessWidget {
                 ),
               ),
             ),
+            Expanded(
+              child: Obx(() {
+                if (controller.messages.isEmpty) {
+                  return const Center(
+                    child: AppText("Start the conversation"),
+                  );
+                }
 
-            /// 🔹 Glass Input Bar (White)
+                return ListView.builder(
+                  padding: const EdgeInsets.symmetric(horizontal: 14),
+                  itemCount: controller.messages.length,
+                  itemBuilder: (context, index) {
+                    final doc = controller.messages[index];
+                    final data = doc.data() as Map<String, dynamic>;
+
+                    final isMe =
+                        data["senderId"] == controller.plannerId;
+
+                    return Align(
+                      alignment:
+                      isMe ? Alignment.centerRight : Alignment.centerLeft,
+                      child: Container(
+                        margin: const EdgeInsets.symmetric(vertical: 4),
+                        padding: const EdgeInsets.all(10),
+                        constraints: BoxConstraints(
+                          maxWidth: MediaQuery.of(context).size.width * 0.7,
+                        ),
+                        decoration: BoxDecoration(
+                          color: isMe
+                              ? const Color(0xFF007AFF)
+                              : Colors.grey.shade200,
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                        child: AppText(
+                          data["message"] ?? "",
+                          color: isMe ? Colors.white : Colors.black87,
+                          fontSize: 14,
+                        ),
+                      ),
+                    );
+                  },
+                );
+              }),
+            ),
+
+            ///  Glass Input Bar (White)
             Padding(
               padding: const EdgeInsets.all(14),
               child: ClipRRect(
@@ -139,7 +185,7 @@ class MessageDetailsScreen extends StatelessWidget {
 
                         Expanded(
                           child: TextField(
-                            controller: messageController,
+                            controller: controller.messageController,
                             style: const TextStyle(
                                 color: Colors.black87),
                             decoration: InputDecoration(
@@ -180,7 +226,9 @@ class MessageDetailsScreen extends StatelessWidget {
                           child: IconButton(
                             icon: const Icon(Icons.send,
                                 color: Colors.white, size: 20),
-                            onPressed: () {},
+                            onPressed: () async  {
+                              await controller.sendMessage();
+                            },
                           ),
                         ),
                       ],
