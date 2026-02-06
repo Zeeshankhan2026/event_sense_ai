@@ -7,11 +7,13 @@ import 'package:event_sense_ai/core/models/event_model.dart';
 import 'package:event_sense_ai/features/auth/vendor_auth_screen/confirm_location.dart';
 import 'package:get/get.dart';
 
+import '../controller/chat_controller.dart';
 import '../controller/inviation_card_controller.dart';
 import '../controller/planner_category_controller.dart';
 import '../controller/submit_application_controller.dart';
 import '../controller/user_controller.dart';
 import '../controller/vendor_job_controller.dart';
+import '../repo/chat_repository.dart';
 
 class GlobalBinding extends Bindings {
   @override
@@ -19,6 +21,7 @@ class GlobalBinding extends Bindings {
     Get.put<UserController>(UserController(), permanent: true);
     Get.put<VendorController>(VendorController(), permanent: true);
     Get.put<GuestController>(GuestController(), permanent: true);
+    Get.put<EventController>(EventController(), permanent: true);
   }
 }
 
@@ -88,8 +91,7 @@ class SubmitApplicationBinding extends GlobalBinding {
 class ChatBinding extends GlobalBinding {
   @override
   void dependencies() {
-    // TODO: implement dependencies
-    super.dependencies();
-   Get.put(PlannerChatController(), permanent: true);
+    Get.lazyPut(() => ChatRepository());
+    Get.lazyPut(() => ChatController(Get.find<ChatRepository>()));
   }
 }

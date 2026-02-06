@@ -296,13 +296,14 @@ class _ProposalDetailsState extends State<ProposalDetails> {
                         });
                         await controller.rejectApplication(application["applicationId"], "rejected");
                         await    notificationController.createApplicationStatusNotification(
-                            vendorId: application["vendorId"],
+                          price: (application["quotedPrice"] ?? 0).toString(),
+                            vendorId: application["vendorId"] ?? "",
                             plannerId: application["plannerId"] ?? "",
-                            eventName: application["eventName"],
-                            eventImage: application["eventImage"],
-                            eventDate: application["eventDate"],
-                            eventLocation: application["eventLocation"],
-                            applicationId: application["applicationId"],
+                            eventName: application["eventName"] ?? "Event",
+                            eventImage: application["eventImage"] ?? "",
+                            eventDate: application["eventDate"] ?? "",
+                            eventLocation: application["eventLocation"] ?? "",
+                            applicationId: application["applicationId"] ?? "",
                             eventId: application["eventId"] ?? "",
                             categoryId: application["categoryId"] ?? "",
                             isAccepted: false);
@@ -322,6 +323,7 @@ class _ProposalDetailsState extends State<ProposalDetails> {
                             application["status"] = "accepted";
                           });
                           await controller.AcceptApplication(
+                            price: application["quotedPrice"],
                             vendorId: application["vendorId"],
                             applicationId: application["applicationId"],
                             status: "accepted",
@@ -333,13 +335,14 @@ class _ProposalDetailsState extends State<ProposalDetails> {
                           /////notification will triggered here ////////////////
 
                        await    notificationController.createApplicationStatusNotification(
-                              vendorId: application["vendorId"],
+                         price: (application["quotedPrice"] ?? 0).toString(),
+                              vendorId: application["vendorId"] ?? "",
                               plannerId: application["plannerId"] ?? "",
-                              eventName: application["eventName"],
-                              eventImage: application["eventImage"],
-                              eventDate: application["eventDate"],
-                              eventLocation: application["eventLocation"],
-                              applicationId: application["applicationId"],
+                              eventName: application["eventName"] ?? "Event",
+                              eventImage: application["eventImage"] ?? "",
+                              eventDate: application["eventDate"] ?? "",
+                              eventLocation: application["eventLocation"] ?? "",
+                              applicationId: application["applicationId"] ?? "",
                               eventId: application["eventId"] ?? "",
                               categoryId: application["categoryId"] ?? "",
                               isAccepted: true);

@@ -119,6 +119,9 @@ class _VendorMessageScreenState extends State<VendorMessageScreen> {
                       time: chat["time"],
                       statusIcon: chat["icon"],
                       profileImage: chat["image"],
+                      vendorId: "",
+                      plannerId: "",
+                      applicationId: "",
                     );
                   },
                 ),

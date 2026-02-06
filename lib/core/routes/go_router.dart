@@ -270,11 +270,7 @@ class go_routes {
       name: AppRoutes.NotificationDetailsScreen,
       page: () => NotificationDetailsScreen(),
     ),
-    GetPage(
-      name: AppRoutes.EventDayProgress,
-      page: () => EventDayProgress(),
-      binding: GlobalBinding(),
-    ),
+
     GetPage(
       name: AppRoutes.chatDetailsScreen,
       page: () => MessageDetailsScreen(),

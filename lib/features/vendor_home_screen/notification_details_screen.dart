@@ -36,7 +36,7 @@ final notification = Get.arguments as AppNotificationModel;
                 Gap(2.h),
                 NotificationDetailsCard(
                   eventName: notification.eventName,
-                  agreedPrice: 342,
+                  agreedPrice: notification.price,
                   scope: notification.body,
                   date: notification.eventDate,
                   time: "12:00 am",

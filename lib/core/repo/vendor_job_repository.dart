@@ -90,7 +90,7 @@ class VendorJobRepository {
        // Also ensure city is lowercase as it is saved in lowercase.
        .where("categoryId", isEqualTo: categoryId.trim().toLowerCase())
        .where("city", isEqualTo: city.trim().toLowerCase())
-       .where("status", isEqualTo: "posted") 
+       .where("status", isEqualTo: "accepted")
        .snapshots();
 
   }

@@ -40,23 +40,23 @@ class _PlannerNotificationScreenState extends State<PlannerNotificationScreen> {
 
               Expanded(
                 child: Obx(() {
-                  if (controller.isLoading.value) {
+                  if (controller.isPlannerLoading.value) {
                     return const Center(
                       child: CircularProgressIndicator(),
                     );
                   }
 
-                  if (controller.planner_notifications.isEmpty) {
+                  if (controller.plannerNotifications.isEmpty) {
                     return const Center(
                       child: Text("No notifications yet"),
                     );
                   }
 
                   return ListView.builder(
-                    itemCount: controller.planner_notifications.length,
+                    itemCount: controller.plannerNotifications.length,
                     itemBuilder: (context, index) {
                       final item =
-                      controller.planner_notifications[index];
+                      controller.plannerNotifications[index];
 
                       return Container(
                         margin: const EdgeInsets.only(bottom: 12),

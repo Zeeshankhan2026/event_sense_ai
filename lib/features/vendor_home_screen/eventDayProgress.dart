@@ -1,9 +1,11 @@
 import 'package:event_sense_ai/core/controller/vendor_job_controller.dart';
+import 'package:event_sense_ai/core/models/jobs_model.dart';
 import 'package:event_sense_ai/core/routes/app_routes.dart';
 import 'package:event_sense_ai/core/widgets/app_buttons.dart';
 import 'package:event_sense_ai/core/widgets/apptext.dart';
 import 'package:event_sense_ai/core/widgets/custom_headerbar.dart';
 import 'package:event_sense_ai/utils/app_assets.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
@@ -12,13 +14,13 @@ import 'package:sizer/sizer.dart';
 import '../../core/controller/vendor_controller.dart';
 
 class EventDayProgress extends StatefulWidget {
-  EventDayProgress({super.key});
+   final VendorJobModel model;
+  EventDayProgress({super.key, required this.model});
   @override
   State<EventDayProgress> createState() => _EventDayProgressState();
 }
 
 class _EventDayProgressState extends State<EventDayProgress> {
-  final activeEventData = Get.arguments;
 
   // Variable to store selected status for Firebase notifications
   String? selectedStatus;
@@ -40,12 +42,12 @@ class _EventDayProgressState extends State<EventDayProgress> {
     try {
       await vendorController.updateEventDayProgress(
         vendorName,
-        activeEventData["title"],
-        activeEventData["city"],
-        activeEventData["plannerId"],
+        widget.model.title,
+        widget.model.city,
+        widget.model.plannerId,
         status,
-        activeEventData["title"],
-        activeEventData["eventDate"],
+        widget.model.title,
+        widget.model.eventDate,
       );
       
       // On success, mark as sent
@@ -62,6 +64,8 @@ class _EventDayProgressState extends State<EventDayProgress> {
     }
   }
 
+  final vendorId = FirebaseAuth.instance.currentUser!.uid;
+
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<VendorController>();
@@ -73,75 +77,46 @@ class _EventDayProgressState extends State<EventDayProgress> {
           child: Column(
             children: [
               CustomHeaderBar(
-                title: "Event Day Progress",
-                showBackButton: true,
-                onBack: () {
+                title: "Event Day Progress", showBackButton: true, onBack: () {
                   Navigator.of(context).pop();
                 },
               ),
               Container(
-                width: 95.w,
-                height: 22.h,
-                padding: EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey.shade300),
+                width: 95.w, height: 22.h, padding: EdgeInsets.all(8), decoration: BoxDecoration(
+                border: Border.all(color: Colors.grey.shade300),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Container(
-                      padding: EdgeInsets.all(8),
-                      margin: EdgeInsets.all(8),
-                      width: 17.w,
-                      height: 4.h,
-                      decoration: BoxDecoration(
+                    Container(padding: EdgeInsets.all(8), margin: EdgeInsets.all(8), width: 17.w, height: 4.h, decoration: BoxDecoration(
                         color: Color(0xffADD3BB),
                         borderRadius: BorderRadius.circular(32),
                       ),
-                      child: AppText(
-                        "Live Now",
-                        fontSize: 11,
-                        color: Colors.green,
-                      ),
-                    ),
+                      child: AppText("Live Now", fontSize: 11, color: Colors.green,),),
                     Row(
                       children: [
                         SizedBox(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              SizedBox(
-                                width: 40.w,
-                                height: 4.h,
-                                child: AppText(
-                                  activeEventData["title"],
-                                  fontSize: 20,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
+                              SizedBox(width: 40.w, height: 4.h, child: AppText(
+                                widget.model.title, fontSize: 20,
+                                  overflow: TextOverflow.ellipsis,),),
                               Gap(1.h),
                               Row(
                                 children: [
                                   Icon(Icons.calendar_today_outlined),
-                                  AppText(
-                                    activeEventData["eventDate"],
-                                    fontSize: 12,
-                                  ),
+                                  AppText(widget.model.eventDate, fontSize: 12,),
                                   AppText("/"),
-                                  AppText(
-                                    activeEventData["city"],
-                                    fontSize: 12,
-                                  ),
+                                  AppText(widget.model.city, fontSize: 12,),
                                 ],
                               ),
                             ],
                           ),
                         ),
                         Spacer(),
-                        Container(
-                          width: 40.w,
-                          height: 13.h,
+                        Container(width: 40.w, height: 13.h,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(20),
                             image: DecorationImage(
@@ -155,11 +130,7 @@ class _EventDayProgressState extends State<EventDayProgress> {
                 ),
               ),
               Gap(2.h),
-              AppText(
-                "Update Your  Status",
-                fontSize: 24,
-                fontWeight: FontWeight.w700,
-              ),
+              AppText("Update Your  Status", fontSize: 24, fontWeight: FontWeight.w700,),
               AppText(
                 "Tap to notify the planner automatically. our AI will handle the communication.",
                 textAlign: TextAlign.center,
@@ -436,10 +407,17 @@ class _EventDayProgressState extends State<EventDayProgress> {
                 children: [
                   AppButtonWidget(
                     onPressed: () {
-                      Get.toNamed(
-                        AppRoutes.chatDetailsScreen,
-                        arguments: activeEventData,
-                      );
+                      print(widget.model.title);
+                      print(widget.model.plannerId);
+                      print(widget.model.title);
+                      Get.toNamed(AppRoutes.chatDetailsScreen,
+                      arguments:  {
+                        "profileImage" : AppAssets.wedding_reception2,
+                        "plannerName" : widget.model.title,
+                        "plannerId" : widget.model.plannerId,
+                        "vendorId" : vendorId,
+                        "applicationId" : widget.model.jobId
+                      });
                     },
                     width: 30.w,
                     height: 6.h,

@@ -15,6 +15,7 @@ class AppNotificationModel {
   final String categoryId;
   final String status; // accepted / rejected
   final bool isRead;
+  final String price;
   final Timestamp createdAt;
 
   AppNotificationModel({
@@ -31,6 +32,7 @@ class AppNotificationModel {
     required this.eventLocation,
     required this.eventImage,
     required this.eventDate,
+    required this.price,
     this.isRead = false,
     Timestamp? createdAt,
   }) : createdAt = createdAt ?? Timestamp.now();
@@ -50,6 +52,7 @@ class AppNotificationModel {
       eventLocation: map["eventLocation"]  ?? '',
       eventImage: map["eventImage"]  ?? '',
       eventDate: map["eventDate"]  ?? '',
+      price: map["price"]  ?? '',
     );
   }
   Map<String, dynamic> toMap() {
@@ -69,6 +72,7 @@ class AppNotificationModel {
       "eventImage": eventImage,
       "eventLocation": eventLocation,
       "eventDate": eventDate,
+      "price": price,
     };
   }
 }

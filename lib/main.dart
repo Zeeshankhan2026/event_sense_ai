@@ -46,7 +46,7 @@ class MyApp extends StatelessWidget {
           ),
             initialRoute : AppRoutes.splash,
           getPages:  go_routes.routes,
-          initialBinding: EventBindings(),
+          initialBinding: GlobalBinding(),
         );
       },
 

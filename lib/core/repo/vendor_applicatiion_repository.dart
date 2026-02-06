@@ -109,6 +109,7 @@ class VendorApplicationRepository {
     String? plannerId,
     String? eventId,
     String? categoryId,
+    String? price,
   }) async {
     try {
       await firestore

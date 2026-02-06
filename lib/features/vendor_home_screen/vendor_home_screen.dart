@@ -4,6 +4,7 @@ import 'package:event_sense_ai/core/models/jobs_model.dart';
 import 'package:event_sense_ai/core/models/vendor_application_model.dart';
 import 'package:event_sense_ai/features/user_home_screen/components/event_card.dart';
 import 'package:event_sense_ai/features/vendor_home_screen/components/new_job_card.dart';
+import 'package:event_sense_ai/features/vendor_home_screen/eventDayProgress.dart';
 import 'package:event_sense_ai/utils/app_assets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -37,6 +38,8 @@ class _VendorHomeScreenState extends State<VendorHomeScreen> {
     super.initState();
     notificationController.listenVendorNotifications();
     notificationController.initAwesomeNotificationListener();
+    jobController.fetchAcceptedApplication();
+
   }
 
   @override
@@ -325,7 +328,7 @@ class _VendorHomeScreenState extends State<VendorHomeScreen> {
                         ),
                         const SizedBox(height: 8),
                         AppText(
-                          "\$4,250",
+                          "\$0.0",
                           fontSize: 32,
                           fontWeight: FontWeight.w700,
                           color: Colors.black,
@@ -349,7 +352,7 @@ class _VendorHomeScreenState extends State<VendorHomeScreen> {
                                 ),
                                 SizedBox(width: 2),
                                 Text(
-                                  "+12%",
+                                  "0%",
                                   style: TextStyle(
                                     fontSize: 14,
                                     fontWeight: FontWeight.w500,
@@ -484,38 +487,35 @@ class _VendorHomeScreenState extends State<VendorHomeScreen> {
                   SizedBox(
                     width: 100.w,
                     height: 32.h,
-                    child: StreamBuilder(
-                        stream: jobController.fetchAcceptedApplication() ,
-                        builder: (context, snap){
-                          if(snap.connectionState == ConnectionState.waiting){
-                            return Center(child: CircularProgressIndicator(),);
-                          }
-                          if(!snap.hasData || snap.data!.docs.isEmpty){
-                            return Center(child: AppText("Don't have active jobs yet"),);
-                          }
-                          if(snap.hasError){
-                            return Center(child: AppText(snap.hasError.toString()),);
-                          }
-                          final data = snap.data!.docs;
-                          return ListView.builder(
-                            physics: NeverScrollableScrollPhysics(),
-                            itemCount: data.length,
-                            itemBuilder: (context, index) {
-                              final snap_data = data[index];
-                              return ActiveJobCard(
-                                  eventName: snap_data["title"],
-                                  eventDate: snap_data["eventDate"],
-                                  eventLocation: snap_data["city"],
-                                  imageUrl: AppAssets.wedding_reception2,
-                                  onTap: (){
-                                    Get.toNamed(AppRoutes.EventDayProgress,
-                                    arguments: snap_data
-                                    );
+                    child: Obx(
+                       () {
+                         final data = jobController.acceptedApplications;
+                         if (jobController.isStatusLaoding.value) {
+                           return Center(child: CircularProgressIndicator());
+                         }
 
-                                  });
-                            },
-                          );
-                        })
+                         if (data.isEmpty) {
+                           return Center(child: AppText("Don't have active jobs yet"));
+                         }
+
+                              return ListView.builder(
+                                shrinkWrap: true, // List is inside SingleChildScrollView
+                                physics: const NeverScrollableScrollPhysics(),
+                                itemCount: data.length,
+                                itemBuilder: (context, index) {
+                                  final jobData = data[index];
+                                  return ActiveJobCard(
+                                      eventName: jobData.title,
+                                      eventDate: jobData.eventDate,
+                                      eventLocation: jobData.city,
+                                      imageUrl: AppAssets.wedding_reception2,
+                                      onTap: (){
+                                        Get.to(EventDayProgress(model: jobData));
+                                      });
+                                },
+                              );
+                      }
+                    )
                   ),
                 ],
               ),

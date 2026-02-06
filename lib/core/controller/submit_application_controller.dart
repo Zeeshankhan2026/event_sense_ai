@@ -108,6 +108,7 @@ class SubmitApplicationController extends GetxController {
     required String eventId,
     required String categoryId,
     required String vendorId,
+    required double price,
     String? jobId,
   }) async {
     try {
@@ -125,8 +126,11 @@ class SubmitApplicationController extends GetxController {
               : null);
 
       if (targetJobId != null) {
-        await FirebaseFirestore.instance.collection("vendor_jobs").doc(targetJobId).set({"status": "closed",
-          "vendorId" : vendorId}, SetOptions(merge: true));
+        await FirebaseFirestore.instance.collection("vendor_jobs").doc(targetJobId).set({
+          "status": "closed",
+          "vendorId": vendorId,
+          "applicationId": applicationId,
+        }, SetOptions(merge: true));
       }
 
       Get.snackbar("Accepted", "Application has been accepted");

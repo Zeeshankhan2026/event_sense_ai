@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:event_sense_ai/core/controller/submit_application_controller.dart';
+import 'package:event_sense_ai/core/models/jobs_model.dart';
+import 'package:event_sense_ai/features/user_home_screen/message_details_screen.dart';
 import 'package:event_sense_ai/utils/app_assets.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -58,7 +60,7 @@ class ViewApplicationScreen extends StatelessWidget {
                       return ListView.builder(
                         itemCount: data.length,
                         itemBuilder: (context, index) {
-                          final application = data[index].data();
+                          final application = data[index];
                           return ProposalCard(
                               imagePath: AppAssets.wedding_reception2,
                               status: application["status"] ?? "available",
@@ -73,14 +75,13 @@ class ViewApplicationScreen extends StatelessWidget {
                                     arguments: application);
                               },
                               onChat: () {
-                                Get.toNamed(AppRoutes.chatDetailsScreen,
-                                  arguments: {
-                                    "applicationId": application["applicationId"],
-                                    "vendorId": application["vendorId"],
-                                    "vendorName": application["vendorName"],
-                                    "vendorImage": application["vendorProfileImage"],
-                                  },
-                                );
+                                Get.toNamed(AppRoutes.chatDetailsScreen, arguments: {
+                                  "vendorName" : application["vendorName"],
+                                  "profileImage" : application["vendorProfileImage"],
+                                  "vendorId" : application["vendorId"],
+                                  "applicationId" : application["applicationId"],
+                                  "plannerId" : application["plannerId"],
+                                });
                               });
                         },
                       );

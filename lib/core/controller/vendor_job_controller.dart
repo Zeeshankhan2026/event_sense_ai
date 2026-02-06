@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:event_sense_ai/core/models/event_day_status_model.dart';
+import 'package:event_sense_ai/core/models/vendor_application_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import '../models/jobs_model.dart';
@@ -10,6 +11,10 @@ class VendorJobController extends GetxController {
   RxList<VendorJobModel> jobs = <VendorJobModel>[].obs;
   final currentVendorId = FirebaseAuth.instance.currentUser!.uid;
   RxBool isStatusLaoding = false.obs;
+
+  RxList<VendorJobModel> acceptedApplications = <VendorJobModel>[].obs;
+
+
   Stream<QuerySnapshot<Map<String, dynamic>>> loadJobs(
     String categoryId,
     String city,
@@ -30,9 +35,17 @@ class VendorJobController extends GetxController {
 
   ////========= Load accepted applications =================
 
-  Stream<QuerySnapshot> fetchAcceptedApplication() {
-    return repo.loadAcceptedApplication(currentVendorId, "closed");
+  void fetchAcceptedApplication() {
+    repo.loadAcceptedApplication(currentVendorId, "closed").listen((snapshot) {
+      acceptedApplications.value = snapshot.docs
+          .map((doc) => VendorJobModel.fromMap(
+        doc.data() as Map<String, dynamic>,
+      ))
+          .toList();
+    });
   }
+
+
 
   Future<void> updateEventDayProgress(
     String vendorName,

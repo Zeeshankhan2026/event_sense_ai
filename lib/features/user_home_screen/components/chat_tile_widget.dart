@@ -1,5 +1,7 @@
 import 'package:event_sense_ai/features/user_home_screen/message_details_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 
 import '../../../core/widgets/apptext.dart';
 
@@ -8,7 +10,10 @@ class ChatTile extends StatelessWidget {
   final String messagePreview;
   final String time;
   final IconData statusIcon;
-  final String profileImage;
+  final String vendorId;
+  final String plannerId;
+  final String applicationId;
+ final String profileImage;
   ChatTile({
     super.key,
 
@@ -17,22 +22,29 @@ class ChatTile extends StatelessWidget {
     required this.time,
     required this.statusIcon,
     required this.profileImage,
+    required this.vendorId,
+    required this.plannerId,
+    required this.applicationId,
   });
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
       onTap: () {
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) =>
-                MessageDetailsScreen(),
-          ),
+        Get.toNamed(
+          '/messageDetailsScreen', // AppRoutes.chatDetailsScreen
+          arguments: {
+            "vendorName": name,
+            "profileImage": "",
+            "vendorId": vendorId,
+            "plannerId": plannerId,
+            "applicationId": applicationId,
+          },
         );
       },
       leading: CircleAvatar(
         radius: 26,
-        backgroundImage: AssetImage(profileImage),
+        backgroundImage: AssetImage(""),
       ),
       title: AppText(name, fontSize: 17, fontWeight: FontWeight.w400),
       subtitle: AppText(

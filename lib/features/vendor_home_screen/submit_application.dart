@@ -181,7 +181,7 @@ class SubmitApplication extends GetView<SubmitApplicationController> {
                         color: Colors.grey,
                       ),
                       const SizedBox(height: 6),
-                      Container(
+                      Obx(() => Container(
                         padding: const EdgeInsets.symmetric(horizontal: 12),
                         decoration: BoxDecoration(
                           border: Border.all(color: Colors.grey.shade100),
@@ -191,8 +191,7 @@ class SubmitApplication extends GetView<SubmitApplicationController> {
                           value: controller.estimatedTimeSetup.value,
                           isExpanded: true,
                           underline: const SizedBox(),
-                          items:
-                          [
+                          items: [
                             "30 minutes",
                             "1 hour",
                             "2 hours",
@@ -209,7 +208,8 @@ class SubmitApplication extends GetView<SubmitApplicationController> {
                             }
                           },
                         ),
-                      ),
+                      )),
+
                       Gap(3.h),
                       AppText(
                         "Proposal Message",

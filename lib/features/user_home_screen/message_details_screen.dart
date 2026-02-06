@@ -1,10 +1,13 @@
 import 'dart:ui';
+import 'package:event_sense_ai/core/controller/vendor_job_controller.dart';
+import 'package:event_sense_ai/core/models/jobs_model.dart';
 import 'package:event_sense_ai/utils/app_assets.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 
+import '../../core/controller/chat_controller.dart';
 import '../../core/controller/planner_chat_controller.dart';
 import '../../core/widgets/apptext.dart';
 
@@ -13,13 +16,18 @@ class MessageDetailsScreen extends StatelessWidget {
       {super.key,});
 
   final messageTextController = TextEditingController();
-  final application = Get.arguments as Map<String ,dynamic>;
-  final controller = Get.find<PlannerChatController>();
+  final Map<String, dynamic> args = (Get.arguments as Map<String, dynamic>?) ?? {};
 
-  final active_eventdata = Get.arguments as Map<String,dynamic>;
+  final chatController = Get.find<ChatController>();
+
 
   @override
   Widget build(BuildContext context) {
+    final String vendorName = args["vendorName"] ?? "Vendor";
+    final String profileImage = args["profileImage"] ?? "";
+    final String vendorId = args["vendorId"];
+    final String plannerId = args["plannerId"];
+    final String applicationId = args["applicationId"];
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -88,7 +96,7 @@ class MessageDetailsScreen extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             AppText(
-                             application["vendorName"],
+                             vendorName,
                               fontSize: 17,
                               fontWeight: FontWeight.w700,
                               color: Colors.black87,
@@ -109,43 +117,52 @@ class MessageDetailsScreen extends StatelessWidget {
             ),
             Expanded(
               child: Obx(() {
-                if (controller.messages.isEmpty) {
-                  return const Center(
-                    child: AppText("Start the conversation"),
-                  );
+                if (chatController.isLoading.value) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+                if (chatController.roomId.value.isEmpty) {
+                  return const Center(child: AppText("Opening chat..."));
                 }
 
-                return ListView.builder(
-                  padding: const EdgeInsets.symmetric(horizontal: 14),
-                  itemCount: controller.messages.length,
-                  itemBuilder: (context, index) {
-                    final doc = controller.messages[index];
-                    final data = doc.data() as Map<String, dynamic>;
+                return StreamBuilder(
+                  stream: chatController.repo.messagesStream(chatController.roomId.value),
+                  builder: (context, snapshot) {
+                    if (!snapshot.hasData) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
 
-                    final isMe =
-                        data["senderId"] == controller.plannerId;
+                    final docs = snapshot.data!.docs;
+                    if (docs.isEmpty) {
+                      return const Center(child: AppText("Start the conversation"));
+                    }
 
-                    return Align(
-                      alignment:
-                      isMe ? Alignment.centerRight : Alignment.centerLeft,
-                      child: Container(
-                        margin: const EdgeInsets.symmetric(vertical: 4),
-                        padding: const EdgeInsets.all(10),
-                        constraints: BoxConstraints(
-                          maxWidth: MediaQuery.of(context).size.width * 0.7,
-                        ),
-                        decoration: BoxDecoration(
-                          color: isMe
-                              ? const Color(0xFF007AFF)
-                              : Colors.grey.shade200,
-                          borderRadius: BorderRadius.circular(14),
-                        ),
-                        child: AppText(
-                          data["message"] ?? "",
-                          color: isMe ? Colors.white : Colors.black87,
-                          fontSize: 14,
-                        ),
-                      ),
+                    return ListView.builder(
+                      padding: const EdgeInsets.symmetric(horizontal: 14),
+                      itemCount: docs.length,
+                      itemBuilder: (context, index) {
+                        final data = docs[index].data();
+                        final isMe = data["senderId"] == chatController.myId;
+
+                        return Align(
+                          alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
+                          child: Container(
+                            margin: const EdgeInsets.symmetric(vertical: 4),
+                            padding: const EdgeInsets.all(10),
+                            constraints: BoxConstraints(
+                              maxWidth: MediaQuery.of(context).size.width * 0.7,
+                            ),
+                            decoration: BoxDecoration(
+                              color: isMe ? const Color(0xFF007AFF) : Colors.grey.shade200,
+                              borderRadius: BorderRadius.circular(14),
+                            ),
+                            child: AppText(
+                              (data["text"] ?? "").toString(),
+                              color: isMe ? Colors.white : Colors.black87,
+                              fontSize: 14,
+                            ),
+                          ),
+                        );
+                      },
                     );
                   },
                 );
@@ -185,7 +202,7 @@ class MessageDetailsScreen extends StatelessWidget {
 
                         Expanded(
                           child: TextField(
-                            controller: controller.messageController,
+                            controller: messageTextController,
                             style: const TextStyle(
                                 color: Colors.black87),
                             decoration: InputDecoration(
@@ -227,7 +244,8 @@ class MessageDetailsScreen extends StatelessWidget {
                             icon: const Icon(Icons.send,
                                 color: Colors.white, size: 20),
                             onPressed: () async  {
-                              await controller.sendMessage();
+                              await chatController.send(messageTextController.text);
+                              messageTextController.clear();
                             },
                           ),
                         ),

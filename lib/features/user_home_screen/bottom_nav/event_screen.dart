@@ -12,6 +12,7 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sizer/sizer.dart';
 
+import '../../../core/models/event_model.dart';
 import '../../../core/routes/app_routes.dart';
 import '../../../core/widgets/app_buttons.dart';
 import '../../../core/widgets/search_widget.dart';
@@ -190,11 +191,12 @@ class _EventScreenState extends State<EventScreen>
         return GestureDetector(
           onTap: () {
             // Check status to decide where to go
-            if (event["status"] == "Approved") {
-              Get.toNamed(AppRoutes.eventDetails, arguments: event["id"]);
-            } else {
-              Get.toNamed(AppRoutes.generateAiScreen, arguments: event["id"]);
-            }
+            final status = (event["status"] ?? "").toString().toLowerCase();
+            if (status == "approved") {
+            Get.toNamed(AppRoutes.eventDetails, arguments: EventModel.fromJson(event, event["id"]));
+          } else {
+            Get.toNamed(AppRoutes.generateAiScreen, arguments: event["id"]);
+          }
           },
           child: EventScreenCard(
             imageUrl: event["eventBannerImage"] ?? AppAssets.wedding_image, // Use banner or fallback
@@ -204,7 +206,7 @@ class _EventScreenState extends State<EventScreen>
             description: event["eventDescriptions"] ?? "Event Description",
             daysLeft: calculateDaysLeft(event["eventStartDate"]),
             people: AppIcons.people_icon,
-            price: (event["eventBudget"] ?? 0).toString(),
+            price: ((event["eventBudget"] ?? 0).round()).toString(),
             date: event["eventStartDate"] ?? "Date",
             location: event["eventLocation"] ?? "Location",
             attendence: (event["guestCount"] ?? "0").toString(),

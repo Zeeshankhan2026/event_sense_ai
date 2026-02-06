@@ -5,7 +5,7 @@ import 'package:sizer/sizer.dart';
 
 class NotificationDetailsCard extends StatelessWidget {
   final String eventName;
-  final double agreedPrice;
+  final String agreedPrice;
   final String scope;
   final String date;
   final String time;
@@ -74,7 +74,7 @@ class NotificationDetailsCard extends StatelessWidget {
               children: [
                 AppText("Agreed Price", fontSize: 20,fontWeight: FontWeight.w600,color: Colors.grey,),
                 Text(
-                  '\$$agreedPrice',
+                  agreedPrice,
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,

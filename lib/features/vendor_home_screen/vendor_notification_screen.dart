@@ -14,13 +14,20 @@ class VendorNotificationScreen extends StatefulWidget {
 }
 
 class _VendorNotificationScreenState extends State<VendorNotificationScreen> {
-  final controller = Get.find<NotificationController>();
+  late final NotificationController controller;
+
   @override
   void initState() {
     super.initState();
-    controller.listenVendorNotifications();
+
+    //  safer than Get.find (avoid "Controller not found" crash)
+    controller = Get.isRegistered<NotificationController>()
+        ? Get.find<NotificationController>()
+        : Get.put(NotificationController());
+
+    controller.listenVendorNotifications(); //  important
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,12 +38,15 @@ class _VendorNotificationScreenState extends State<VendorNotificationScreen> {
           child: Column(
             children: [
               const Gap(12),
-             CustomHeaderBar(title: "Notifications", showBackButton: true, onBack: (){
-               Navigator.of(context).pop();
-             },),
+              CustomHeaderBar(
+                title: "Notifications",
+                showBackButton: true,
+                onBack: () => Navigator.of(context).pop(),
+              ),
               Expanded(
-                child: Obx((){
-                  if (controller.isLoading.value) {
+                child: Obx(() {
+                  //  use vendor loading flag
+                  if (controller.isVendorLoading.value) {
                     return const Center(child: CircularProgressIndicator());
                   }
 
@@ -45,34 +55,36 @@ class _VendorNotificationScreenState extends State<VendorNotificationScreen> {
                   }
 
                   return ListView.builder(
-                      itemCount: controller.notifications.length,
-                      itemBuilder: (_, index) {
-                        final n =  controller.notifications[index];
-                        return RsvpNotification(
-                          onPressed: (){
-                            if(n.status == "accepted"){
-                              Get.toNamed(AppRoutes.NotificationDetailsScreen,
-                              arguments: n);
-                            }
+                    itemCount: controller.notifications.length,
+                    itemBuilder: (_, index) {
+                      final n = controller.notifications[index];
 
-                          },
-                          iconContainerColor: n.status == "accepted" ?  Colors.greenAccent : Colors.redAccent,
-                          status_icons: n.status == "accepted" ?  Icons.check : Icons.cancel_outlined,
-                          name: n.eventName,
-                          message: n.body,
+                      final isAccepted = (n.status == "accepted");
 
-                        );
-                      });
-                }
-                ),
+                      return RsvpNotification(
+                        onPressed: () {
+                          if (isAccepted) {
+                            Get.toNamed(
+                              AppRoutes.NotificationDetailsScreen,
+                              arguments: n,
+                            );
+                          }
+                        },
+                        iconContainerColor:
+                        isAccepted ? Colors.greenAccent : Colors.redAccent,
+                        status_icons:
+                        isAccepted ? Icons.check : Icons.cancel_outlined,
+                        name: n.eventName,
+                        message: n.body,
+                      );
+                    },
+                  );
+                }),
               ),
-
             ],
           ),
         ),
       ),
     );
   }
-
-
 }

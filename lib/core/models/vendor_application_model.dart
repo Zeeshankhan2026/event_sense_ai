@@ -29,11 +29,9 @@ class VendorApplicationModel {
     required this.createdAt,
   });
 
-  ///  Convert Firestore → Model
-  factory VendorApplicationModel.fromMap(
-      Map<String, dynamic> map,
-      String docId,
+  factory VendorApplicationModel.fromMap(Map<String, dynamic> map,    String docId,
       ) {
+
     return VendorApplicationModel(
       applicationId: docId,
       jobId: map['jobId'] ?? '',
